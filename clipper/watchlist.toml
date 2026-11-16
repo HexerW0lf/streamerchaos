@@ -1,6 +1,6 @@
 # Streamer, die automatisch geclippt werden.
-# Der Kanalbetreiber hat am 16.11.2026 entschieden: alle Streamer freigegeben, Verantwortung liegt bei ihm
-# (siehe kanal/erlaubnisse.md). Wer widerspricht, hier sofort auf aktiv = false setzen.
+# NUR Streamer eintragen, die es erlaubt haben (Nachweis in kanal/erlaubnisse.md)!
+# ACHTUNG: Für die Einträge unten fehlen Einzelnachweise, siehe kanal/erlaubnisse.md.
 #
 # [[kanal]]
 # twitch = "kanalname"      # wie in twitch.tv/kanalname
@@ -11,29 +11,149 @@
 [[kanal]]
 twitch = "papaplatte"
 profil = "standard"
-max_clips = 2
-aktiv = true
-
-[[kanal]]
-twitch = "trymacs"
-profil = "standard"
-max_clips = 2
+max_clips = 3
 aktiv = true
 
 [[kanal]]
 twitch = "montanablack88"
 profil = "standard"
-max_clips = 2
+max_clips = 3
 aktiv = true
 
 [[kanal]]
-twitch = "rewinside"
+twitch = "trymacs"
 profil = "standard"
-max_clips = 2
+max_clips = 3
+aktiv = true
+
+[[kanal]]
+twitch = "revedtv"
+profil = "standard"
+max_clips = 3
+aktiv = true
+
+[[kanal]]
+twitch = "eliasn97"
+profil = "standard"
+max_clips = 3
 aktiv = true
 
 [[kanal]]
 twitch = "handofblood"
 profil = "standard"
-max_clips = 2
+max_clips = 3
+aktiv = true
+
+[[kanal]]
+twitch = "knossi"
+profil = "standard"
+max_clips = 3
+aktiv = true
+
+[[kanal]]
+twitch = "gronkh"
+profil = "standard"
+max_clips = 3
+aktiv = true
+
+[[kanal]]
+twitch = "rumathra"
+profil = "standard"
+max_clips = 3
+aktiv = true
+
+[[kanal]]
+twitch = "zarbex"
+profil = "standard"
+max_clips = 3
+aktiv = true
+
+[[kanal]]
+twitch = "sidneyeweka"
+profil = "standard"
+max_clips = 3
+aktiv = true
+
+[[kanal]]
+twitch = "stegi"
+profil = "standard"
+max_clips = 3
+aktiv = true
+
+[[kanal]]
+twitch = "tolkin"
+profil = "standard"
+max_clips = 3
+aktiv = true
+
+[[kanal]]
+twitch = "unsympathischtv"
+profil = "standard"
+max_clips = 3
+aktiv = true
+
+[[kanal]]
+twitch = "letshugotv"
+profil = "standard"
+max_clips = 3
+aktiv = true
+
+[[kanal]]
+twitch = "noway4u_sir"
+profil = "standard"
+max_clips = 3
+aktiv = true
+
+[[kanal]]
+twitch = "mckytv"
+profil = "standard"
+max_clips = 3
+aktiv = true
+
+[[kanal]]
+twitch = "dhalucard"
+profil = "standard"
+max_clips = 3
+aktiv = true
+
+[[kanal]]
+twitch = "inscope21"
+profil = "standard"
+max_clips = 3
+aktiv = true
+
+[[kanal]]
+twitch = "staiy"
+profil = "standard"
+max_clips = 3
+aktiv = true
+
+[[kanal]]
+twitch = "rewinside"
+profil = "standard"
+max_clips = 3
+aktiv = true
+
+[[kanal]]
+twitch = "bastighg"
+profil = "standard"
+max_clips = 3
+aktiv = true
+
+[[kanal]]
+twitch = "shlorox"
+profil = "standard"
+max_clips = 3
+aktiv = true
+
+[[kanal]]
+twitch = "aminematue"
+profil = "standard"
+max_clips = 3
+aktiv = true
+
+[[kanal]]
+twitch = "mahluna"
+profil = "standard"
+max_clips = 3
 aktiv = true
