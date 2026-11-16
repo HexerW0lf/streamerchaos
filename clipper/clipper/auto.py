@@ -215,7 +215,7 @@ def aufraeumen() -> int:
     weg = 0
     for f in VEROEFF.glob("*/posts.json"):
         posts = json.loads(f.read_text(encoding="utf-8"))
-        if posts and all(p["status"] == "entwurf" for p in posts):
+        if posts and all(p["status"] in ("entwurf", "geplant") for p in posts):
             shutil.rmtree(f.parent)
             weg += 1
     return weg

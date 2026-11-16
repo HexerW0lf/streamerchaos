@@ -54,7 +54,9 @@ Regeln:
 - titel_tiktok: max. 100 Zeichen.
 - beschreibung: 1–2 Sätze, was passiert (ohne Pointe vorwegzunehmen).
 - hashtags: 4–6, aus diesen wählen/ergänzen: {' '.join(profil.hashtags)}
-- bewertung: 1–10, wie viral der Moment wohl ist.
+- bewertung: 1–10, ehrlich und fair. Maßstab: 6 = solider, unterhaltsamer Moment, den man gern zu Ende schaut
+  (reicht zum Hochladen); 8 = richtig lustig/krass; 10 = viral-verdächtig. Unter 6 = langweilig, unverständlich
+  oder nur laut ohne Inhalt. Nicht zu streng sein: ein guter Lacher oder eine echte Reaktion ist eine 6.
 Beispiele für Hooks: {' | '.join(profil.hook_beispiele)}
 Profil-Hinweise: {profil.hinweise.strip()}
 
