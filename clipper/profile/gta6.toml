@@ -1,0 +1,39 @@
+# Profil für GTA 6 (und GTA 5 / GTA RP zum Testen)
+spiel = "GTA 6"
+sprache = "de"
+
+# Wörter im Transkript, die auf einen guten Moment hindeuten
+stichworte = [
+  "polizei", "cops", "wanted", "sterne", "verfolgung", "flucht", "crash", "unfall",
+  "explosion", "überfall", "bank", "heist", "tot", "gestorben", "erschossen",
+  "was", "alter", "digga", "nein", "lauf", "fahr", "schnell", "hilfe", "wie",
+  "vice city", "lucia", "jason", "flugzeug", "hubschrauber", "boot", "sprung",
+]
+
+hashtags = ["#gta6", "#gta", "#vicecity", "#gaming", "#twitch", "#streamer", "#clips"]
+
+hook_beispiele = [
+  "Er hat nicht gesehen, was hinter ihm passiert ...",
+  "Das ist der schlimmste Fluchtversuch in GTA 6",
+  "Niemand hat damit gerechnet",
+  "5 Sterne in 10 Sekunden",
+  "Der Chat ist komplett eskaliert",
+]
+
+# Länge in Sekunden. Für TikTok-Geld zählen nur Videos über 60 s.
+clip_min = 30
+clip_max = 80
+tiktok_ueber_60 = true
+
+# blur = ganzes Bild mittig, unscharfer Hintergrund
+# crop = Mitte ausschneiden, bildfüllend
+# facecam = Facecam oben, Spiel unten (facecam = [x, y, breite, höhe] als Anteil 0..1)
+layout = "blur"
+# facecam = [0.0, 0.0, 0.25, 0.3]
+
+hinweise = """
+Gute GTA-Clips: Verfolgungsjagden mit Ende (Crash, Flucht geschafft, erwischt),
+unerwartete Tode, absurde Physik, lustige Interaktionen mit anderen Spielern (RP),
+lautes Reagieren des Streamers. Schlecht: Menüs, Ladebildschirme, Warten, Pausen.
+Der Clip muss in den ersten 2 Sekunden spannend sein und eine Pointe haben.
+"""

@@ -1,0 +1,16 @@
+# Zwischenspeicher und große Dateien
+clipper/arbeit/
+clipper/ausgabe/
+clipper/veroeffentlichen/**/*.mp4
+.clips-branch/
+higgsfield-output/
+kanal/bilder/*/
+kanal/bilder/*.log
+*.log
+__pycache__/
+
+# Geheimnisse und private Daten
+.env
+.claude/
+clipper/kanal/zahlen.json
+clipper/kanal/verbindungen.json

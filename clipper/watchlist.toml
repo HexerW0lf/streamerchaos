@@ -1,0 +1,14 @@
+# Streamer, die automatisch geclippt werden.
+# NUR Streamer eintragen, die es erlaubt haben (Nachweis in kanal/erlaubnisse.md)!
+#
+# [[kanal]]
+# twitch = "kanalname"      # wie in twitch.tv/kanalname
+# profil = "gta6"           # Profil aus profile/ (gta6, standard, ...)
+# max_clips = 4             # Clips pro Stream
+# aktiv = true
+
+[[kanal]]
+twitch = "papaplatte"
+profil = "gta6"
+max_clips = 3
+aktiv = false   # nur zum Testen; erst auf true setzen, wenn die Erlaubnis da ist

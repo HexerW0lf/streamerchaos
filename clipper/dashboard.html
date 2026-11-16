@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clip-Zentrale</title>
+<style>
+:root{
+  --bg:#f6f6f8;--panel:#ffffff;--panel2:#f0f0f4;--text:#16161d;--muted:#666674;--line:#e2e2ea;
+  --accent:#d6336c;--accent2:#7048e8;--ok:#2b8a3e;--warn:#e67700;--bad:#c92a2a;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f0f14;--panel:#17171f;--panel2:#1f1f29;--text:#ececf1;--muted:#9a9aab;--line:#2a2a36;
+  --accent:#f06595;--accent2:#9775fa;--ok:#51cf66;--warn:#ffa94d;--bad:#ff6b6b;}}
+:root[data-theme="dark"]{
+  --bg:#0f0f14;--panel:#17171f;--panel2:#1f1f29;--text:#ececf1;--muted:#9a9aab;--line:#2a2a36;
+  --accent:#f06595;--accent2:#9775fa;--ok:#51cf66;--warn:#ffa94d;--bad:#ff6b6b;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{display:flex;align-items:center;gap:16px;padding:14px 20px;border-bottom:1px solid var(--line);background:var(--panel);position:sticky;top:0;z-index:5;flex-wrap:wrap}
+header h1{font-size:18px;margin:0;letter-spacing:.2px}
+header h1 span{color:var(--accent)}
+nav{display:flex;gap:4px;flex-wrap:wrap}
+nav button{background:none;border:0;color:var(--muted);padding:8px 12px;border-radius:8px;font:inherit;cursor:pointer}
+nav button.aktiv{background:var(--panel2);color:var(--text);font-weight:600}
+nav button:hover{color:var(--text)}
+.frist{margin-left:auto;font-size:13px;color:var(--muted)}
+.frist b{color:var(--warn)}
+main{max-width:1200px;margin:0 auto;padding:20px 16px 60px}
+.raster{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+.karte{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
+.karte h2{font-size:15px;margin:0 0 12px}
+.kpi{font-size:28px;font-weight:700}
+.klein{font-size:13px;color:var(--muted)}
+label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}
+input,select{width:100%;padding:9px 10px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);color:var(--text);font:inherit}
+.reihe{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.knopf{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:10px 16px;font:inherit;font-weight:600;cursor:pointer}
+.knopf.leise{background:var(--panel2);color:var(--text);border:1px solid var(--line);font-weight:500}
+.knopf:disabled{opacity:.5;cursor:default}
+.balken{height:10px;background:var(--panel2);border-radius:99px;overflow:hidden;margin:6px 0 2px}
+.balken i{display:block;height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent))}
+.ziel{margin:12px 0}
+.ziel .kopf{display:flex;justify-content:space-between;font-size:14px}
+.job{border-top:1px solid var(--line);padding:10px 0}
+.job:first-child{border-top:0}
+pre{background:var(--panel2);padding:8px;border-radius:8px;font-size:12px;white-space:pre-wrap;word-break:break-word;margin:6px 0 0;max-height:200px;overflow:auto}
+.tag{display:inline-block;font-size:12px;padding:2px 8px;border-radius:99px;background:var(--panel2);border:1px solid var(--line)}
+.tag.läuft{color:var(--warn)}.tag.fertig{color:var(--ok)}.tag.fehler{color:var(--bad)}
+.clips{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.clip{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+.clip video{width:100%;aspect-ratio:9/16;background:#000;display:block}
+.clip .inhalt{padding:12px;display:flex;flex-direction:column;gap:8px;flex:1}
+.clip h3{font-size:14px;margin:0}
+.clip .zeile{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.clip select{width:auto;padding:5px 8px;font-size:13px}
+.clip .knopf{padding:6px 10px;font-size:13px}
+.lauf h2{font-size:15px;margin:24px 0 10px}
+.bald{opacity:.75}
+.leer{color:var(--muted);padding:30px;text-align:center}
+table{width:100%;border-collapse:collapse;font-size:13px}
+td,th{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right}
+td:first-child,th:first-child{text-align:left}
+.hinweis{font-size:13px;color:var(--muted);background:var(--panel2);border-radius:8px;padding:10px;margin-top:10px}
+@media (max-width:600px){.reihe{grid-template-columns:1fr}.frist{margin-left:0;width:100%}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Clip-<span>Zentrale</span></h1>
+  <nav id="nav">
+    <button data-tab="start" class="aktiv">Übersicht</button>
+    <button data-tab="clipper">Clipper</button>
+    <button data-tab="clips">Clips</button>
+    <button data-tab="kanal">Kanal</button>
+    <button data-tab="verbindungen">Verbindungen</button>
+    <button data-tab="bald">Bald</button>
+  </nav>
+  <div class="frist" id="frist"></div>
+</header>
+<main>
+
+<section data-seite="start">
+  <div class="raster">
+    <div class="karte"><h2>Clips gesamt</h2><div class="kpi" id="k-clips">–</div><div class="klein" id="k-clips2"></div></div>
+    <div class="karte"><h2>Gepostet</h2><div class="kpi" id="k-gepostet">–</div><div class="klein">als „gepostet“ markiert</div></div>
+    <div class="karte"><h2>Läuft gerade</h2><div class="kpi" id="k-jobs">–</div><div class="klein">Clipper-Aufträge</div></div>
+    <div class="karte"><h2>YouTube-Monetarisierung</h2><div class="kpi" id="k-yt">–</div><div class="klein" id="k-yt2">Zahlen im Tab „Kanal“ eintragen</div></div>
+  </div>
+  <div class="karte" style="margin-top:16px"><h2>Nächste Posts</h2><div id="naechste" class="klein">–</div></div>
+</section>
+
+<section data-seite="clipper" hidden>
+  <div class="raster" style="grid-template-columns:repeat(auto-fit,minmax(320px,1fr))">
+    <div class="karte">
+      <h2>Neuer Auftrag</h2>
+      <form id="f-start">
+        <label>Twitch-/YouTube-Link oder Datei</label>
+        <input name="quelle" placeholder="https://www.twitch.tv/videos/…" required>
+        <div class="reihe">
+          <div><label>Profil</label><select name="profil" id="profil"></select></div>
+          <div><label>Max. Clips</label><input name="max_clips" type="number" min="1" max="20" value="6"></div>
+        </div>
+        <div class="reihe">
+          <div><label>Von (HH:MM:SS)</label><input name="start" placeholder="optional"></div>
+          <div><label>Bis (HH:MM:SS)</label><input name="ende" placeholder="optional"></div>
+        </div>
+        <div class="reihe">
+          <div><label>Modell für Auswahl</label><select name="modell">
+            <option value="sonnet">Sonnet (gut)</option><option value="haiku">Haiku (spart Limit)</option><option value="opus">Opus (beste Auswahl)</option></select></div>
+          <div><label>Layout</label><select name="layout">
+            <option value="">wie Profil</option><option value="blur">Bild mittig, Hintergrund unscharf</option>
+            <option value="crop">Mitte ausschneiden</option><option value="facecam">Facecam oben</option></select></div>
+        </div>
+        <label style="display:flex;gap:8px;align-items:center;color:var(--text)"><input type="checkbox" name="nur_analyse" style="width:auto"> Nur Analyse (nichts rendern)</label>
+        <div style="margin-top:14px;display:flex;gap:10px;align-items:center">
+          <button class="knopf" type="submit">Clipper starten</button><span id="start-msg" class="klein"></span>
+        </div>
+      </form>
+      <div class="hinweis">Lange Streams: am besten einen GTA-Abschnitt mit Von/Bis wählen. Werbung und Reactions erkennt die Auswahl meist, kostet aber Zeit.</div>
+    </div>
+    <div class="karte"><h2>Aufträge</h2><div id="jobs" class="klein">Noch keine Aufträge seit dem Start des Dashboards.</div></div>
+  </div>
+</section>
+
+<section data-seite="clips" hidden>
+  <div class="zeile" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+    <label style="margin:0">Filter</label>
+    <select id="filter" style="width:auto"><option value="">alle</option><option>neu</option><option>geplant</option><option>gepostet</option><option>verworfen</option></select>
+  </div>
+  <div id="laeufe"></div>
+</section>
+
+<section data-seite="kanal" hidden>
+  <div class="raster" style="grid-template-columns:repeat(auto-fit,minmax(320px,1fr))">
+    <div class="karte">
+      <h2>Zahlen eintragen</h2>
+      <form id="f-kanal">
+        <label>Datum</label><input name="datum" type="date" id="k-datum">
+        <div class="reihe">
+          <div><label>YouTube-Abos</label><input name="abos" type="number" min="0"></div>
+          <div><label>Wiedergabestunden (365 T.)</label><input name="stunden" type="number" min="0"></div>
+        </div>
+        <label>Shorts-Aufrufe (90 T.)</label><input name="shorts90" type="number" min="0">
+        <div class="reihe">
+          <div><label>TikTok-Follower</label><input name="tt_follower" type="number" min="0"></div>
+          <div><label>TikTok-Aufrufe (30 T.)</label><input name="tt30" type="number" min="0"></div>
+        </div>
+        <div style="margin-top:14px"><button class="knopf" type="submit">Speichern</button></div>
+      </form>
+      <div class="hinweis">Zahlen findest du in YouTube Studio → Verdienen und in TikTok → Creator-Tools.</div>
+    </div>
+    <div class="karte"><h2>Weg zur Monetarisierung</h2>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:8px">
+        <button class="knopf" id="sync-knopf" type="button">Aus Metricool holen</button>
+        <span id="sync-msg" class="klein"></span>
+      </div>
+      <div id="ziele" class="klein">Noch keine Zahlen.</div>
+      <div class="hinweis">Metricool liefert Wiedergabezeit und Aufrufe für <i>alle</i> Videos zusammen. Die genauen YPP-Werte (nur lange Videos bzw. nur Shorts) stehen in YouTube Studio → Verdienen.</div>
+    </div>
+  </div>
+  <div class="karte" style="margin-top:16px"><h2>Verlauf</h2><div id="verlauf" class="klein">–</div></div>
+</section>
+
+<section data-seite="verbindungen" hidden>
+  <div class="raster" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">
+    <div class="karte">
+      <h2>Deine Kanäle</h2>
+      <form id="f-verb">
+        <label>YouTube-Kanal (Link)</label><input name="youtube" placeholder="https://www.youtube.com/@deinname">
+        <label>TikTok-Profil (Link)</label><input name="tiktok" placeholder="https://www.tiktok.com/@deinname">
+        <label>Kanal-Gmail</label><input name="gmail" type="email" placeholder="kanal@gmail.com">
+        <div style="margin-top:14px"><button class="knopf" type="submit">Speichern</button> <span id="verb-msg" class="klein"></span></div>
+      </form>
+      <div class="hinweis">Wird nur lokal auf deinem PC gespeichert.</div>
+    </div>
+    <div class="karte">
+      <h2>Schnellzugriff</h2>
+      <div id="links" class="zeile" style="display:flex;flex-direction:column;gap:8px"></div>
+    </div>
+    <div class="karte">
+      <h2>Claude-Verbindungen</h2>
+      <div class="klein">Claude greift über offizielle Connectoren zu. Verbinden in der Claude-App unter <b>Einstellungen → Connectoren</b>:</div>
+      <div class="ziel"><div class="kopf"><span><b>Gmail</b></span><span class="tag">Connector</span></div>
+        <div class="klein">Mails lesen, Antworten an Streamer und Kampagnen als Entwurf vorbereiten. Gesendet wird nur nach deinem OK.</div></div>
+      <div class="ziel"><div class="kopf"><span><b>Metricool</b></span><span class="tag">Connector</span></div>
+        <div class="klein">Verbindet YouTube <i>und</i> TikTok: Posts planen, Statistiken (Abos, Aufrufe) abrufen. In Metricool einmal beide Kanäle verknüpfen.</div></div>
+      <div class="hinweis">Danach im Chat z. B.: „Plane die Clips von heute in Metricool ein“ oder „Trag meine aktuellen Kanalzahlen ins Dashboard ein“.</div>
+    </div>
+  </div>
+</section>
+
+<section data-seite="bald" hidden>
+  <div class="raster">
+    <div class="karte bald"><h2>Live-Modus</h2><div class="klein">Clips schon während der Stream läuft, mit Twitch-Chat als Signal.</div></div>
+    <div class="karte bald"><h2>Kampagnen</h2><div class="klein">Bezahlte Clipping-Kampagnen finden und im Blick behalten.</div></div>
+    <div class="karte bald"><h2>Post-Planer</h2><div class="klein">Wochenplan für YouTube und TikTok, Erinnerungen.</div></div>
+    <div class="karte bald"><h2>Erlaubnisse</h2><div class="klein">Welche Streamer Clips erlauben, mit Nachweis.</div></div>
+  </div>
+</section>
+
+</main>
+<script>
+const $ = s => document.querySelector(s);
+const STICHTAG = new Date('2027-02-01T00:00:00');
+let daten = null, timer = null;
+
+function zahl(n){ if(n==null) return '–'; return n>=1e6 ? (n/1e6).toLocaleString('de-DE',{maximumFractionDigits:1})+' Mio.' : Math.round(n).toLocaleString('de-DE'); }
+function esc(s){ return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+async function post(url, body){ const r = await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}); return r.json(); }
+
+// Tabs
+let tab = 'start';
+try { tab = localStorage.getItem('tab') || 'start'; } catch(e){}
+function zeige(t){
+  tab = t;
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('aktiv', b.dataset.tab===t));
+  document.querySelectorAll('section[data-seite]').forEach(s=>s.hidden = s.dataset.seite!==t);
+  try { localStorage.setItem('tab', t); } catch(e){}
+}
+$('#nav').addEventListener('click', e=>{ if(e.target.dataset.tab) zeige(e.target.dataset.tab); });
+zeige(tab);
+
+function frist(){
+  const tage = Math.ceil((STICHTAG - new Date())/86400000);
+  $('#frist').innerHTML = tage>0 ? `Noch <b>${tage} Tage</b> bis YouTube die Hürde verdoppelt (01.02.2027)` : 'Neue YouTube-Schwellen aktiv';
+}
+
+function schwellen(){
+  const neu = new Date() >= STICHTAG;
+  return { abos:1000, stunden: neu?8000:4000, shorts: neu?20e6:10e6 };
+}
+
+function zielZeile(name, ist, ziel){
+  const p = ist==null ? 0 : Math.min(100, ist/ziel*100);
+  const fehlt = ist==null ? null : Math.max(0, ziel-ist);
+  return `<div class="ziel"><div class="kopf"><span>${name}</span><span>${zahl(ist)} / ${zahl(ziel)}</span></div>
+    <div class="balken"><i style="width:${p}%"></i></div>
+    <div class="klein">${ist==null?'keine Angabe':(fehlt===0?'✓ erreicht':`fehlt ${zahl(fehlt)} (${p.toFixed(0)} %)`)}</div></div>`;
+}
+
+function renderKanal(){
+  const z = daten.kanal, s = schwellen();
+  const l = z.length ? z[z.length-1] : null;
+  if(!l){ $('#ziele').textContent='Noch keine Zahlen.'; $('#verlauf').textContent='–'; $('#k-yt').textContent='–'; return; }
+  const tage = Math.max(1, Math.ceil((STICHTAG - new Date())/86400000));
+  $('#ziele').innerHTML =
+    `<div class="klein">Stand ${new Date(l.datum).toLocaleDateString('de-DE')}</div>
+     <h2 style="margin-top:12px">YouTube Werbeeinnahmen</h2>
+     ${zielZeile('Abonnenten', l.abos, s.abos)}
+     ${zielZeile('Wiedergabestunden (365 T.)', l.stunden, s.stunden)}
+     <div class="klein" style="text-align:center">– oder –</div>
+     ${zielZeile('Shorts-Aufrufe (90 T.)', l.shorts90, s.shorts)}
+     ${l.stunden!=null && l.stunden < s.stunden ? `<div class="hinweis">Für ${zahl(s.stunden)} Std. bis 01.02.: ${zahl((s.stunden-l.stunden)/tage)} Std. pro Tag nötig.</div>`:''}
+     <h2 style="margin-top:16px">TikTok Creator Rewards</h2>
+     ${zielZeile('Follower', l.tt_follower, 10000)}
+     ${zielZeile('Aufrufe (30 T.)', l.tt30, 100000)}`;
+  const pAbo = (l.abos??0)/s.abos, pWeg = Math.max((l.stunden??0)/s.stunden, (l.shorts90??0)/s.shorts);
+  const gesamt = Math.min(100, Math.min(pAbo,1)*50 + Math.min(pWeg,1)*50);
+  $('#k-yt').textContent = gesamt.toFixed(0)+' %';
+  $('#k-yt2').textContent = `Abos ${zahl(l.abos)} · Std. ${zahl(l.stunden)} · Shorts ${zahl(l.shorts90)}`;
+  $('#verlauf').innerHTML = `<table><tr><th>Datum</th><th>Abos</th><th>Stunden</th><th>Shorts 90 T.</th><th>TikTok-Follower</th><th>TikTok 30 T.</th></tr>` +
+    z.slice().reverse().map(e=>`<tr><td>${new Date(e.datum).toLocaleDateString('de-DE')}</td><td>${zahl(e.abos)}</td><td>${zahl(e.stunden)}</td><td>${zahl(e.shorts90)}</td><td>${zahl(e.tt_follower)}</td><td>${zahl(e.tt30)}</td></tr>`).join('') + '</table>';
+}
+
+function renderJobs(){
+  const j = daten.jobs;
+  $('#k-jobs').textContent = j.filter(x=>x.status==='läuft').length;
+  if(!j.length) return;
+  $('#jobs').innerHTML = j.map(x=>{
+    const cls = x.status==='läuft'?'läuft':(x.status==='fertig'?'fertig':'fehler');
+    return `<div class="job"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center">
+      <span><span class="tag ${cls}">${esc(x.status)}</span> ${esc(x.gestartet)}</span>
+      ${x.status==='läuft'?`<button class="knopf leise" data-stop="${esc(x.id)}">Abbrechen</button>`:''}</div>
+      <div class="klein" style="margin-top:4px;word-break:break-all">${esc(x.quelle)}</div>
+      <pre>${esc(x.zeilen.join('\n')||'startet …')}</pre></div>`;
+  }).join('');
+}
+
+const STATI = ['neu','geplant','gepostet','verworfen'];
+function renderClips(){
+  const f = $('#filter').value;
+  let alle = 0, gepostet = 0;
+  const offen = [];
+  const html = daten.laeufe.map(l=>{
+    alle += l.clips.length;
+    l.clips.forEach(c=>{ if(c.status==='gepostet') gepostet++; else if(c.status!=='verworfen') offen.push(c); });
+    const cs = l.clips.filter(c=>!f || c.status===f);
+    if(!cs.length) return '';
+    return `<div class="lauf"><h2>${esc(l.titel||l.name)} <span class="klein">${esc(l.name)}</span></h2><div class="clips">` +
+      cs.map(c=>`<div class="clip">
+        <video src="${c.video}" controls preload="metadata"></video>
+        <div class="inhalt">
+          <h3>${esc(c.titel_youtube)}</h3>
+          <div class="klein">${esc(c.hook)}</div>
+          <div class="zeile"><span class="tag">${c.bewertung}/10</span><span class="tag">${Math.round(c.ende-c.start)} s</span>
+            <select data-clip="${esc(c.id)}">${STATI.map(s=>`<option ${s===c.status?'selected':''}>${s}</option>`).join('')}</select></div>
+          <div class="zeile">
+            <button class="knopf leise" data-kopie="yt" data-id="${esc(c.id)}">YouTube-Text</button>
+            <button class="knopf leise" data-kopie="tt" data-id="${esc(c.id)}">TikTok-Text</button>
+          </div>
+        </div></div>`).join('') + '</div></div>';
+  }).join('');
+  $('#laeufe').innerHTML = html || '<div class="leer">Noch keine Clips. Starte den Clipper im Tab „Clipper“.</div>';
+  $('#k-clips').textContent = alle;
+  $('#k-clips2').textContent = `${daten.laeufe.length} Stream(s)`;
+  $('#k-gepostet').textContent = gepostet;
+  $('#naechste').innerHTML = offen.length ? '<table>' + offen.slice(0,6).map(c=>{
+    const m = (c.info||'').match(/Posten: (.*)/);
+    return `<tr><td>${esc(c.titel_youtube)}</td><td>${esc(m?m[1]:'')}</td><td>${esc(c.status)}</td></tr>`;
+  }).join('') + '</table>' : 'Keine offenen Clips.';
+}
+
+function abschnitt(info, kopf){
+  const teile = info.split(/\n## /);
+  const t = teile.find(x=>x.startsWith(kopf));
+  return t ? t.slice(kopf.length).trim() : '';
+}
+function finde(id){ for(const l of daten.laeufe) for(const c of l.clips) if(c.id===id) return c; }
+
+document.addEventListener('click', async e=>{
+  const b = e.target.closest('button'); if(!b) return;
+  if(b.dataset.stop){ await post('/api/stop',{id:b.dataset.stop}); lade(); }
+  if(b.dataset.kopie){
+    const c = finde(b.dataset.id); if(!c) return;
+    let text = b.dataset.kopie==='yt'
+      ? abschnitt(c.info,'YouTube Shorts').replace(/\*\*Titel:\*\* /,'').replace(/\*\*Beschreibung:\*\*\n/,'')
+      : abschnitt(c.info,'TikTok').split('\n')[0].replace(/\*\*Text:\*\* /,'');
+    try { await navigator.clipboard.writeText(text); b.textContent='Kopiert ✓'; }
+    catch(err){ prompt('Text kopieren:', text); }
+    setTimeout(()=>{ b.textContent = b.dataset.kopie==='yt'?'YouTube-Text':'TikTok-Text'; }, 1500);
+  }
+});
+document.addEventListener('change', async e=>{
+  if(e.target.dataset.clip){ await post('/api/clipstatus',{id:e.target.dataset.clip,status:e.target.value}); lade(); }
+  if(e.target.id==='filter') renderClips();
+});
+
+$('#f-start').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const fd = new FormData(e.target), body = Object.fromEntries(fd);
+  body.nur_analyse = fd.has('nur_analyse');
+  const r = await post('/api/start', body);
+  $('#start-msg').textContent = r.fehler ? 'Fehler: '+r.fehler : 'Gestartet ✓';
+  lade();
+});
+$('#f-kanal').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const r = await post('/api/kanal', Object.fromEntries(new FormData(e.target)));
+  if(!r.fehler){ daten.kanal = r.kanal; renderKanal(); }
+});
+
+function sicherLink(u){ return /^https:\/\//.test(u||'') ? u : ''; }
+function renderVerb(){
+  const v = daten.verbindungen || {}, f = $('#f-verb');
+  for(const k of ['youtube','tiktok','gmail']) if(document.activeElement!==f[k] && !f[k].dataset.bearbeitet) f[k].value = v[k]||'';
+  const links = [
+    ['YouTube Studio','https://studio.youtube.com'],
+    ['YouTube-Kanal', sicherLink(v.youtube)],
+    ['TikTok-Profil', sicherLink(v.tiktok)],
+    ['TikTok Studio (Planen)','https://www.tiktok.com/tiktokstudio'],
+    ['Gmail','https://mail.google.com'],
+    ['Google-Sicherheit','https://myaccount.google.com/security'],
+    ['Metricool','https://app.metricool.com'],
+  ].filter(l=>l[1]);
+  $('#links').innerHTML = links.map(([t,u])=>`<a class="knopf leise" style="text-decoration:none;text-align:left" href="${esc(u)}" target="_blank" rel="noopener">${esc(t)} ↗</a>`).join('');
+}
+function renderSync(){
+  const s = daten.sync || {status:'bereit'};
+  $('#sync-knopf').disabled = s.status==='läuft';
+  $('#sync-msg').textContent = s.status==='läuft' ? 'Claude holt die Zahlen … (ca. 1 Min.)'
+    : s.status==='fertig' ? `Aktualisiert um ${s.zeit} ✓`
+    : s.status==='fehler' ? `Fehler: ${s.fehler}` : '';
+}
+$('#sync-knopf').addEventListener('click', async ()=>{ await post('/api/sync',{}); lade(); });
+$('#f-verb').addEventListener('input', e=>{ e.target.dataset.bearbeitet='1'; });
+$('#f-verb').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const r = await post('/api/verbindungen', Object.fromEntries(new FormData(e.target)));
+  if(!r.fehler){ daten.verbindungen = r.verbindungen; e.target.querySelectorAll('input').forEach(i=>delete i.dataset.bearbeitet); renderVerb(); $('#verb-msg').textContent='Gespeichert ✓'; }
+});
+
+async function lade(){
+  try {
+    daten = await (await fetch('/api/status')).json();
+  } catch(e){ $('#frist').textContent = 'Dashboard-Server nicht erreichbar'; return; }
+  frist();
+  const sel = $('#profil');
+  if(!sel.options.length) sel.innerHTML = daten.profile.map(p=>`<option ${p==='gta6'?'selected':''}>${esc(p)}</option>`).join('');
+  if(!$('#k-datum').value) $('#k-datum').value = daten.heute;
+  renderJobs(); renderClips(); renderKanal(); renderVerb(); renderSync();
+  clearTimeout(timer);
+  const aktiv = daten.jobs.some(j=>j.status==='läuft') || (daten.sync && daten.sync.status==='läuft');
+  timer = setTimeout(lade, aktiv ? 3000 : 20000);
+}
+lade();
+</script>
+</body>
+</html>

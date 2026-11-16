@@ -1,0 +1,7 @@
+# Einstellungen für den Cloud-Betrieb
+# GitHub-Repo, in dem dieses Projekt liegt (öffentlich, damit Metricool die Clips laden kann)
+github_repo = "HexerW0lf/streamerchaos"
+
+# Metricool
+metricool_brand_id = "8154528"
+zeitzone = "Europe/Berlin"

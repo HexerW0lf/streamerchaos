@@ -1,0 +1,11 @@
+# Allgemeines Profil für jedes Spiel / jeden Stream
+spiel = ""
+sprache = "de"
+stichworte = ["was", "alter", "digga", "nein", "krass", "wie", "hilfe", "chat"]
+hashtags = ["#gaming", "#twitch", "#streamer", "#clips"]
+hook_beispiele = ["Niemand hat damit gerechnet", "Der Chat ist komplett eskaliert"]
+clip_min = 25
+clip_max = 75
+tiktok_ueber_60 = true
+layout = "blur"
+hinweise = "Gute Clips haben in den ersten 2 Sekunden Spannung und eine klare Pointe."
