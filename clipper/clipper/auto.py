@@ -206,13 +206,16 @@ def erledigt(vid: str) -> None:
     shutil.rmtree(ARBEIT / vid, ignore_errors=True)
 
 
-def aufraeumen(tage: int = 14) -> int:
-    """Alte veröffentlichte Clips löschen (Platz im clips-Branch sparen)."""
-    grenze = dt.date.today() - dt.timedelta(days=tage)
+def aufraeumen() -> int:
+    """Clips löschen, deren Entwürfe in Metricool angelegt sind.
+
+    Metricool kopiert das Video beim Anlegen in den eigenen Speicher, danach wird die
+    öffentliche Kopie im clips-Branch nicht mehr gebraucht.
+    """
     weg = 0
     for f in VEROEFF.glob("*/posts.json"):
         posts = json.loads(f.read_text(encoding="utf-8"))
-        if posts and all(p["status"] != "neu" and p["zeit"][:10] < grenze.isoformat() for p in posts):
+        if posts and all(p["status"] == "entwurf" for p in posts):
             shutil.rmtree(f.parent)
             weg += 1
     return weg

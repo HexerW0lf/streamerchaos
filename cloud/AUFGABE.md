@@ -37,7 +37,8 @@ Alle Befehle im Ordner `clipper/` ausführen, mit `python3`. Lange Befehle im Hi
      `"tiktokData": {"title": "<titel_tiktok>", "privacyOption": "PUBLIC_TO_EVERYONE", "isAigc": false}` statt `youtubeData`.
    Nach Erfolg: `python3 clipper.py auto markiere <datei> entwurf <plannerUrl>`. Bei Fehler: `... markiere <datei> fehler <Grund>`.
 7. **Abschluss je VOD:** `python3 clipper.py auto erledigt <ID>`.
-8. **Aufräumen:** `python3 clipper.py auto aufraeumen`, danach nochmal `python3 clipper.py auto hochladen`.
-9. **Speichern:** Änderungen an `clipper/kanal/auto_status.json`, `clipper/kanal/auto_log.md` und `clipper/veroeffentlichen/*/posts.json`
-   committen und auf `main` pushen (Nachricht: „Automatik-Lauf <Datum>“). Die `.mp4`-Dateien NICHT auf main committen (stehen in .gitignore).
+8. **Aufräumen:** `python3 clipper.py auto aufraeumen`, danach nochmal `python3 clipper.py auto hochladen`
+   (Metricool hat die Videos dann schon kopiert; die öffentliche Kopie wird entfernt).
+9. **Speichern:** Änderungen an `clipper/kanal/auto_status.json`, `clipper/kanal/auto_log.md` und `clipper/veroeffentlichen/`
+   committen (`git add -A clipper/kanal clipper/veroeffentlichen`) und auf `main` pushen (Nachricht: „Automatik-Lauf <Datum>“). Die `.mp4`-Dateien NICHT auf main committen (stehen in .gitignore).
 10. Kurze Zusammenfassung: wie viele VODs, wie viele Entwürfe, Fehler.
