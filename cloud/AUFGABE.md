@@ -6,7 +6,7 @@ Alle Befehle im Ordner `clipper/` ausführen, mit `python3`. Lange Befehle im Hi
 ## Feste Regeln
 
 - **Nichts veröffentlichen.** Posts in Metricool nur als **Entwurf** (`draft: true`) anlegen. Der Nutzer gibt sie abends selbst frei.
-- Nur Streamer aus `clipper/watchlist.toml` mit `aktiv = true` (dort stehen nur Streamer mit Erlaubnis).
+- Nur Streamer aus `clipper/watchlist.toml` mit `aktiv = true` (vom Kanalbetreiber freigegeben).
 - Titel ehrlich: Spiel richtig benennen (kein „GTA 6“ bei anderem Spiel).
 - Keine Mails senden. Keine anderen Metricool-Tools als `getScheduledPosts` und `createScheduledPost` benutzen.
 - Bei Fehlern: Schritt überspringen, am Ende kurz in `clipper/kanal/auto_log.md` notieren.

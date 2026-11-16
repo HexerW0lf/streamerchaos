@@ -1,5 +1,8 @@
 # Erlaubnisse der Streamer
 
+**Entscheidung vom 16.11.2026:** Der Kanalbetreiber gibt alle Streamer zum Clippen frei und trägt selbst die Verantwortung.
+Bei Widerspruch oder Copyright-Meldung: Streamer in `clipper/watchlist.toml` sofort auf `aktiv = false` setzen und die Clips löschen.
+
 | Streamer | Kanal | Gefragt am | Antwort | Bedingungen | Nachweis (Screenshot/Link) |
 |---|---|---|---|---|---|
 | | | | | | |

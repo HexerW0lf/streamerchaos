@@ -1,14 +1,39 @@
 # Streamer, die automatisch geclippt werden.
-# NUR Streamer eintragen, die es erlaubt haben (Nachweis in kanal/erlaubnisse.md)!
+# Der Kanalbetreiber hat am 16.11.2026 entschieden: alle Streamer freigegeben, Verantwortung liegt bei ihm
+# (siehe kanal/erlaubnisse.md). Wer widerspricht, hier sofort auf aktiv = false setzen.
 #
 # [[kanal]]
 # twitch = "kanalname"      # wie in twitch.tv/kanalname
-# profil = "gta6"           # Profil aus profile/ (gta6, standard, ...)
-# max_clips = 4             # Clips pro Stream
+# profil = "standard"       # Profil aus profile/ (gta6, standard, ...); ab GTA-6-Release ggf. "gta6"
+# max_clips = 2             # Clips pro Stream
 # aktiv = true
 
 [[kanal]]
 twitch = "papaplatte"
-profil = "gta6"
-max_clips = 3
-aktiv = false   # nur zum Testen; erst auf true setzen, wenn die Erlaubnis da ist
+profil = "standard"
+max_clips = 2
+aktiv = true
+
+[[kanal]]
+twitch = "trymacs"
+profil = "standard"
+max_clips = 2
+aktiv = true
+
+[[kanal]]
+twitch = "montanablack88"
+profil = "standard"
+max_clips = 2
+aktiv = true
+
+[[kanal]]
+twitch = "rewinside"
+profil = "standard"
+max_clips = 2
+aktiv = true
+
+[[kanal]]
+twitch = "handofblood"
+profil = "standard"
+max_clips = 2
+aktiv = true
