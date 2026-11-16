@@ -43,11 +43,11 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
     if hook.strip():
         zeilen.append(f"Dialogue: 1,{_ass_zeit(0)},{_ass_zeit(3.5)},Hook,,0,0,0,,{_ass_text(hook.strip())}")
 
-    # Wörter in kurze Gruppen (max. 3 Wörter, Bruch bei Pause)
+    # Wörter in kurze Gruppen (max. 2 Wörter, Bruch bei Pause)
     im_clip = [w for w in woerter if w.ende > start and w.start < ende]
     gruppen: list[list[Wort]] = []
     for w in im_clip:
-        if (not gruppen or len(gruppen[-1]) >= 3 or w.start - gruppen[-1][-1].ende > 0.6
+        if (not gruppen or len(gruppen[-1]) >= 2 or w.start - gruppen[-1][-1].ende > 0.6
                 or sum(len(x.text) for x in gruppen[-1]) + len(w.text) > 22):
             gruppen.append([w])
         else:
