@@ -52,3 +52,7 @@ Facecam-Layout: in der Profil-Datei `layout = "facecam"` und `facecam = [x, y, b
 
 - Fremde Clips nur mit Erlaubnis des Streamers oder aus offiziellen Clipping-Kampagnen posten.
 - Für die Monetarisierung braucht jeder Clip einen eigenen Beitrag (Voice-over, Kommentar, Einordnung). Siehe Skill `/kanal-start`.
+
+## Offen
+
+- **Mehr Facecam zeigen** (Wunsch 17.11.2026): Facecam automatisch erkennen und dann Layout `facecam` (Cam oben, Spiel unten) nutzen.

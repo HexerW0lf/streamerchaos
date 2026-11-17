@@ -34,9 +34,10 @@ Gewählt: **StreamerChaos** (gleicher Name auf YouTube und TikTok)
 Die krassesten, lustigsten und absurdesten Momente deutscher Streamer – jeden Tag neu, mit Einordnung.
 Jeden Sonntag: die Top 10 der Woche.
 
-Hier findest du die Highlights aus den Streams, die du verpasst hast: Fails, Verfolgungsjagden, Chaos im Voice-Chat und Momente, mit denen niemand gerechnet hat – aus GTA 6 und allen Spielen, die gerade gehypt werden. Jeder Clip ist kommentiert und eingeordnet, damit du verstehst, was gerade passiert ist.
+Hier findest du die Highlights aus den Streams, die du verpasst hast: Fails, Rage-Momente, Chaos im Chat und Szenen, mit denen niemand gerechnet hat – aus GTA 6 und allem, was gerade gestreamt wird.
 
-Alle Clips mit Erlaubnis der Streamer. Die Original-Streams sind in jeder Videobeschreibung verlinkt – schaut bei ihnen vorbei!
+Die Original-Streams sind in jeder Videobeschreibung verlinkt – schaut bei den Streamern vorbei!
+Du bist Streamer und willst einen Clip entfernt haben? Schreib uns: streamerchaosde@gmail.com
 
 Kein offizieller Kanal der Spiele-Hersteller oder Streamer.
 
