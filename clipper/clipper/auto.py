@@ -32,6 +32,37 @@ ARBEIT = PROJEKT / "arbeit" / "auto"
 VEROEFF = PROJEKT / "veroeffentlichen"
 
 POST_UHRZEITEN = ("17:30", "19:30", "21:00")  # nach der Arbeit
+POST_UHRZEITEN_GTA = ("12:00", "15:00", "17:30", "19:30", "21:00")  # GTA-6-Woche: mehr Posts
+
+try:
+    from zoneinfo import ZoneInfo
+    TZ = ZoneInfo("Europe/Berlin")
+except Exception:  # pragma: no cover
+    TZ = None
+
+
+def jetzt() -> dt.datetime:
+    """Ortszeit Berlin (die Cloud läuft in UTC)."""
+    return dt.datetime.now(TZ).replace(tzinfo=None) if TZ else dt.datetime.now()
+
+
+def _cloud() -> dict:
+    f = PROJEKT / "cloud.toml"
+    return tomllib.loads(f.read_text(encoding="utf-8-sig")) if f.is_file() else {}
+
+
+def gta_woche(tag: dt.date | None = None) -> bool:
+    """Sonderphase zum GTA-6-Release (Zeitraum in cloud.toml)."""
+    c = _cloud()
+    if not c.get("gta_woche_start"):
+        return False
+    tag = tag or jetzt().date()
+    return dt.date.fromisoformat(c["gta_woche_start"]) <= tag <= dt.date.fromisoformat(c["gta_woche_ende"])
+
+
+def ist_gta(titel: str) -> bool:
+    t = (titel or "").lower()
+    return "gta" in t or "grand theft auto" in t
 
 
 def _yt(args: list[str]) -> subprocess.CompletedProcess:
@@ -53,8 +84,9 @@ def speichere_status(s: dict) -> None:
 def lade_watchlist() -> list[dict]:
     if not WATCHLIST.is_file():
         return []
+    woche = gta_woche()
     return [k for k in tomllib.loads(WATCHLIST.read_text(encoding="utf-8-sig")).get("kanal", [])
-            if k.get("aktiv", True)]
+            if k.get("aktiv", True) and (woche or not k.get("nur_gta_woche"))]
 
 
 def ist_live(name: str) -> bool:
@@ -63,7 +95,14 @@ def ist_live(name: str) -> bool:
 
 
 def neue_vods(max_pro_kanal: int = 1, max_alter_tage: int = 3) -> list[dict]:
+    """Neue VODs der Watchlist. In der GTA-Woche auch laufende Streams (in Teilen), GTA zuerst.
+
+    Job-ID = VOD-ID, oder `VOD-ID-STARTSEKUNDE` für Teilstücke eines (noch laufenden) Streams.
+    """
     status = lade_status()
+    teile = status.get("teile", {})
+    offen_vods = {str(o.get("vod", i.split("-")[0])) for i, o in status["offen"].items()}
+    woche = gta_woche()
     raus = []
     for k in lade_watchlist():
         name = k["twitch"]
@@ -77,22 +116,37 @@ def neue_vods(max_pro_kanal: int = 1, max_alter_tage: int = 3) -> list[dict]:
         gefunden = 0
         for i, e in enumerate(eintraege):
             vid = str(e.get("id", "")).lstrip("v")
-            if not vid or vid in status["erledigt"] or vid in status["offen"]:
+            if not vid or vid in status["erledigt"] or vid in offen_vods:
                 continue
-            if i == 0 and live:  # aktuelles VOD wächst noch
+            titel = e.get("title", "") or ""
+            gta = ist_gta(titel)
+            if k.get("nur_gta") and not gta:
+                continue
+            laeuft = i == 0 and live
+            if laeuft and not woche:  # aktuelles VOD wächst noch
                 continue
             ts = e.get("timestamp")
             if ts and dt.datetime.now().timestamp() - ts > max_alter_tage * 86400:
                 continue
-            if (e.get("duration") or 0) < 30 * 60:
+            dauer = float(e.get("duration") or 0)
+            bis = float(teile.get(vid, 0))
+            if dauer - bis < (45 * 60 if laeuft else 10 * 60 if bis else 30 * 60):
                 continue
-            raus.append({"id": vid, "kanal": name, "titel": e.get("title", ""),
-                         "dauer": e.get("duration"), "profil": k.get("profil", "standard"),
+            profil = k.get("profil", "standard")
+            if woche and gta:
+                profil = "gta6_en" if k.get("sprache") == "en" else "gta6"
+            raus.append({"id": f"{vid}-{int(bis)}" if (laeuft or bis) else vid, "vod": vid,
+                         "kanal": name, "titel": titel, "dauer": dauer, "profil": profil,
                          "max_clips": int(k.get("max_clips", 4)),
-                         "start": k.get("start"), "ende": k.get("ende")})
+                         "min_bewertung": int(k.get("min_bewertung", 0)),
+                         "sprache": k.get("sprache", "de"),
+                         "start": bis or k.get("start"), "ende": dauer if laeuft else k.get("ende"),
+                         "teil": laeuft, "gta": gta})
             gefunden += 1
             if gefunden >= max_pro_kanal:
                 break
+    # Deutsch vor Englisch, GTA vor Rest, längere Streams zuerst
+    raus.sort(key=lambda v: (v["sprache"] != "de", not v["gta"], -(v["dauer"] or 0)))
     return raus
 
 
@@ -100,14 +154,16 @@ def analysiere(vod: dict) -> Path:
     ordner = ARBEIT / vod["id"]
     ordner.mkdir(parents=True, exist_ok=True)
     profil = lade_profil(vod.get("profil", "standard"))
-    info = quelle.hole_info(f"https://www.twitch.tv/videos/{vod['id']}")
-    audio = quelle.lade_audio(info, ordner / "ton")
+    info = quelle.hole_info(f"https://www.twitch.tv/videos/{vod.get('vod', vod['id'])}")
+    start = float(vod.get("start") or 0)
+    ende = vod.get("ende")
+    audio = quelle.lade_audio(info, ordner / "ton", start or None, float(ende) if ende else None)
     db = analyse.lautstaerke(audio)
     anzahl = max(10, vod["max_clips"] * 3)
-    kand = analyse.finde_kandidaten(db, anzahl=anzahl)
+    kand = analyse.finde_kandidaten(db, anzahl=anzahl, offset=start)
     with ThreadPoolExecutor(max_workers=4) as pool:
         woerter = list(pool.map(
-            lambda k: transkript.transkribiere(audio, k.start, k.ende, 0.0, profil.sprache, ordner / "transkript"),
+            lambda k: transkript.transkribiere(audio, k.start, k.ende, start, profil.sprache, ordner / "transkript"),
             kand))
     prompt = baue_prompt(kand, woerter, profil, vod["max_clips"], info.kanal, info.titel)
     (ordner / "auswahl_prompt.md").write_text(prompt, encoding="utf-8")
@@ -115,20 +171,24 @@ def analysiere(vod: dict) -> Path:
                                                         "dauer": info.dauer}, ensure_ascii=False, indent=1),
                                       encoding="utf-8")
     s = lade_status()
-    s["offen"][vod["id"]] = {"seit": dt.datetime.now().isoformat(timespec="minutes"), "schritt": "auswahl"}
+    s["offen"][vod["id"]] = {"seit": jetzt().isoformat(timespec="minutes"), "schritt": "auswahl",
+                             "vod": vod.get("vod", vod["id"])}
     speichere_status(s)
     return ordner / "auswahl_prompt.md"
 
 
 def _post_zeiten(anzahl: int, belegt: set[str]) -> list[str]:
+    """Nächste freie Slots, frühestens 90 Minuten ab jetzt (Berliner Zeit)."""
     raus = []
-    tag = dt.date.today() + dt.timedelta(days=1)
+    frueh = jetzt() + dt.timedelta(minutes=90)
+    tag = frueh.date()
     while len(raus) < anzahl:
-        for uhr in POST_UHRZEITEN:
+        for uhr in (POST_UHRZEITEN_GTA if gta_woche(tag) else POST_UHRZEITEN):
             z = f"{tag.isoformat()}T{uhr}:00"
-            if z not in belegt and len(raus) < anzahl:
-                raus.append(z)
-                belegt.add(z)
+            if z in belegt or dt.datetime.fromisoformat(z) < frueh or len(raus) >= anzahl:
+                continue
+            raus.append(z)
+            belegt.add(z)
         tag += dt.timedelta(days=1)
     return raus
 
@@ -138,10 +198,12 @@ def rendere(vid: str) -> Path:
     meta = json.loads((ordner / "meta.json").read_text(encoding="utf-8"))
     profil = lade_profil(meta.get("profil", "standard"))
     auswahl = json.loads((ordner / "auswahl.json").read_text(encoding="utf-8"))
-    clips = clips_aus_json(auswahl, profil, meta["max_clips"])
+    clips = [c for c in clips_aus_json(auswahl, profil, meta["max_clips"])
+             if c.bewertung >= int(meta.get("min_bewertung") or 0)]
     info = quelle.Info(meta["url"], meta.get("titel", ""), meta.get("kanal_name", ""), float(meta.get("dauer") or 0),
                        meta["url"])
     audio = ordner / "ton" / "audio.m4a"
+    audio_start = float(meta.get("start") or 0)
     ziel = VEROEFF / vid
     ziel.mkdir(parents=True, exist_ok=True)
     belegt = {p["zeit"] for p in alle_posts()}
@@ -150,7 +212,7 @@ def rendere(vid: str) -> Path:
     for nr, c in enumerate(clips, 1):
         if info.dauer:
             c.ende = min(c.ende, info.dauer)
-        w = transkript.transkribiere(audio, c.start, c.ende, 0.0, profil.sprache, ordner / "transkript")
+        w = transkript.transkribiere(audio, c.start, c.ende, audio_start, profil.sprache, ordner / "transkript")
         roh = quelle.lade_abschnitt(info, c.start, c.ende, ordner / "abschnitte" / f"{int(c.start)}_{int(c.ende)}.mp4")
         tmp = ordner / f"render_{nr:02d}"
         render.rendere(roh, w, c.start, c.ende, c.hook, tmp, profil.layout, profil.facecam)
@@ -167,7 +229,8 @@ def rendere(vid: str) -> Path:
             "text_youtube": f"{c.beschreibung}\n\n{quelle_txt}\n\n{' '.join(tags)}",
             "text_tiktok": f"{c.titel_tiktok} {' '.join(t for t in tags if t.lower() not in c.titel_tiktok.lower())}".strip(),
             "hashtags": tags, "hook": c.hook, "dauer": round(c.ende - c.start),
-            "bewertung": c.bewertung, "streamer": info.kanal, "vod": vid,
+            "bewertung": c.bewertung, "streamer": info.kanal, "vod": meta.get("vod", vid),
+            "sprache": meta.get("sprache", "de"),
             "status": "neu",
         })
     (ziel / "posts.json").write_text(json.dumps(posts, ensure_ascii=False, indent=1), encoding="utf-8")
@@ -199,9 +262,17 @@ def markiere_post(datei: str, status: str, info: str = "") -> bool:
 
 
 def erledigt(vid: str) -> None:
+    """Job abschließen. Teilstück eines laufenden Streams: nur merken, bis wohin analysiert ist."""
+    meta_f = ARBEIT / vid / "meta.json"
+    meta = json.loads(meta_f.read_text(encoding="utf-8")) if meta_f.is_file() else {}
     s = lade_status()
     s["offen"].pop(vid, None)
-    s["erledigt"][vid] = dt.date.today().isoformat()
+    vod = str(meta.get("vod") or vid.split("-")[0])
+    if meta.get("teil"):
+        s.setdefault("teile", {})[vod] = float(meta.get("ende") or 0)
+    else:
+        s["erledigt"][vod] = jetzt().date().isoformat()
+        s.get("teile", {}).pop(vod, None)
     speichere_status(s)
     shutil.rmtree(ARBEIT / vid, ignore_errors=True)
 
@@ -227,6 +298,9 @@ def main(argv: list[str]) -> int:
         print(json.dumps(vods, ensure_ascii=False, indent=1))
         return 0
     befehl, *rest = argv
+    if befehl == "gta":
+        print("GTA-Woche aktiv" if gta_woche() else "keine GTA-Woche")
+        return 0
     if befehl == "analyse":
         vods = {v["id"]: v for v in neue_vods(max_pro_kanal=3, max_alter_tage=30)}
         vod = vods.get(rest[0])

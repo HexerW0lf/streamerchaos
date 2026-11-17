@@ -157,3 +157,105 @@ twitch = "mahluna"
 profil = "standard"
 max_clips = 3
 aktiv = true
+
+# ---- Englische Großstreamer: NUR in der GTA-Woche, NUR GTA-Streams, NUR Clips mit Bewertung >= 8 ----
+
+[[kanal]]
+twitch = "kaicenat"
+profil = "gta6_en"
+sprache = "en"
+max_clips = 2
+min_bewertung = 8
+nur_gta_woche = true
+nur_gta = true
+aktiv = true
+
+[[kanal]]
+twitch = "xqc"
+profil = "gta6_en"
+sprache = "en"
+max_clips = 2
+min_bewertung = 8
+nur_gta_woche = true
+nur_gta = true
+aktiv = true
+
+[[kanal]]
+twitch = "summit1g"
+profil = "gta6_en"
+sprache = "en"
+max_clips = 2
+min_bewertung = 8
+nur_gta_woche = true
+nur_gta = true
+aktiv = true
+
+[[kanal]]
+twitch = "shroud"
+profil = "gta6_en"
+sprache = "en"
+max_clips = 2
+min_bewertung = 8
+nur_gta_woche = true
+nur_gta = true
+aktiv = true
+
+[[kanal]]
+twitch = "timthetatman"
+profil = "gta6_en"
+sprache = "en"
+max_clips = 2
+min_bewertung = 8
+nur_gta_woche = true
+nur_gta = true
+aktiv = true
+
+[[kanal]]
+twitch = "jynxzi"
+profil = "gta6_en"
+sprache = "en"
+max_clips = 2
+min_bewertung = 8
+nur_gta_woche = true
+nur_gta = true
+aktiv = true
+
+[[kanal]]
+twitch = "caseoh_"
+profil = "gta6_en"
+sprache = "en"
+max_clips = 2
+min_bewertung = 8
+nur_gta_woche = true
+nur_gta = true
+aktiv = true
+
+[[kanal]]
+twitch = "buddha"
+profil = "gta6_en"
+sprache = "en"
+max_clips = 2
+min_bewertung = 8
+nur_gta_woche = true
+nur_gta = true
+aktiv = true
+
+[[kanal]]
+twitch = "hasanabi"
+profil = "gta6_en"
+sprache = "en"
+max_clips = 2
+min_bewertung = 8
+nur_gta_woche = true
+nur_gta = true
+aktiv = true
+
+[[kanal]]
+twitch = "sketch"
+profil = "gta6_en"
+sprache = "en"
+max_clips = 2
+min_bewertung = 8
+nur_gta_woche = true
+nur_gta = true
+aktiv = true

@@ -1,0 +1,30 @@
+# GTA 6 bei englischsprachigen (US-)Streamern. Nur in der GTA-Woche aktiv, nur extrem starke Momente.
+spiel = "GTA 6"
+sprache = "en"
+
+stichworte = [
+  "cops", "police", "wanted", "stars", "chase", "crash", "explosion", "heist", "bank",
+  "dead", "died", "what", "bro", "no way", "chat", "oh my god", "run", "drive",
+  "vice city", "lucia", "jason", "plane", "helicopter", "boat", "jump",
+]
+
+hashtags = ["#gta6", "#gta", "#vicecity", "#gaming", "#twitch", "#streamer", "#clips"]
+
+hook_beispiele = [
+  "US-Streamer verliert komplett die Fassung",
+  "Das hat in GTA 6 noch niemand geschafft",
+  "Der Chat konnte es nicht glauben",
+]
+
+clip_min = 30
+clip_max = 80
+tiktok_ueber_60 = true
+layout = "blur"
+
+hinweise = """
+Der Streamer spricht ENGLISCH, der Kanal ist deutsch. Hook, Titel und Beschreibung auf DEUTSCH schreiben,
+im Titel den Streamer nennen (z. B. "xQc", "Kai Cenat"). Nur Momente, die auch ohne Englischkenntnisse
+funktionieren (Action, Crash, Reaktion, Physik, Schreien) oder bei denen das Englische leicht verständlich ist.
+NUR wirklich krasse, virale Momente: Bewertung ehrlich vergeben, Clips unter 8 werden verworfen.
+Mehr Facecam zeigen: Momente mit sichtbarer, starker Reaktion bevorzugen.
+"""
