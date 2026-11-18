@@ -18,7 +18,7 @@ aktiv = true
 twitch = "montanablack88"
 profil = "standard"
 max_clips = 3
-aktiv = true
+aktiv = false  # vom Kanalbetreiber gesperrt (18.11.2026): keine Clips mehr
 
 [[kanal]]
 twitch = "trymacs"
