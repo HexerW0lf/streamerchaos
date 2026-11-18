@@ -32,7 +32,8 @@ ARBEIT = PROJEKT / "arbeit" / "auto"
 VEROEFF = PROJEKT / "veroeffentlichen"
 
 POST_UHRZEITEN = ("17:30", "19:30", "21:00")  # nach der Arbeit
-POST_UHRZEITEN_GTA = ("12:00", "15:00", "17:30", "19:30", "21:00")  # GTA-6-Woche: mehr Posts
+YT_MAX = 58  # Sekunden; YouTube blockt Shorts > 60 s mit Copyright-Anspruch
+POST_UHRZEITEN_GTA =("12:00", "15:00", "17:30", "19:30", "21:00")  # GTA-6-Woche: mehr Posts
 
 try:
     from zoneinfo import ZoneInfo
@@ -217,10 +218,22 @@ def rendere(vid: str) -> Path:
         datei = ziel / f"{nr:02d}_{slug(c.titel_youtube or c.hook, 30)}.mp4"
         shutil.move(str(tmp / "clip.mp4"), datei)
         shutil.rmtree(tmp, ignore_errors=True)
+        # YouTube sperrt Shorts über 60 s mit Urheberrechts-Anspruch weltweit (Content ID, z. B. ContentView).
+        # Deshalb eigene YouTube-Fassung mit max. YT_MAX s: Ende (Pointe) bleibt, Anfang wird gekürzt.
+        datei_yt = datei
+        if c.ende - c.start > YT_MAX:
+            yt_start = c.ende - YT_MAX
+            tmp = ordner / f"render_{nr:02d}_yt"
+            render.rendere(roh, w, yt_start, c.ende, c.hook, tmp, profil.layout, profil.facecam,
+                           quelle_beginnt_bei=c.start)
+            datei_yt = datei.with_name(datei.stem + "_yt.mp4")
+            shutil.move(str(tmp / "clip.mp4"), datei_yt)
+            shutil.rmtree(tmp, ignore_errors=True)
         tags = list(dict.fromkeys(c.hashtags or profil.hashtags[:5]))
         quelle_txt = f"🎥 Original-Stream: {info.url}?t={int(c.start)}s\n👤 Streamer: {info.kanal}"
         posts.append({
             "datei": datei.relative_to(PROJEKT).as_posix(),
+            "datei_youtube": datei_yt.relative_to(PROJEKT).as_posix(),
             "zeit": zeiten[nr - 1],
             "titel_youtube": c.titel_youtube[:100],
             "titel_tiktok": c.titel_tiktok,
@@ -312,7 +325,8 @@ def main(argv: list[str]) -> int:
         erledigt(rest[0])
     elif befehl == "posts":
         from .hosting import raw_url
-        offen = [p | {"url": raw_url(p["datei"])} for p in alle_posts() if p["status"] == "neu"]
+        offen = [p | {"url": raw_url(p["datei"]), "url_youtube": raw_url(p.get("datei_youtube") or p["datei"])}
+                 for p in alle_posts() if p["status"] == "neu"]
         print(json.dumps(offen, ensure_ascii=False, indent=1))
     elif befehl == "hochladen":
         from .hosting import push

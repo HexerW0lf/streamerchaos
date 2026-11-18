@@ -17,6 +17,9 @@ Alle Befehle im Ordner `clipper/` ausführen, mit `python3`. Lange Befehle im Hi
 - Keine Mails senden. Keine anderen Metricool-Tools als `getScheduledPosts` und `createScheduledPost` benutzen.
 - Bei Fehlern: Schritt überspringen, am Ende kurz in `clipper/kanal/auto_log.md` notieren.
 
+- **Urheberrecht YouTube:** Shorts über 60 s mit Copyright-Anspruch (z. B. ContentView bei MontanaBlack) sperrt YouTube
+  weltweit. Darum für YouTube IMMER `url_youtube` nehmen (max. 58 s), für TikTok `url` (volle Länge).
+
 ## Ablauf
 
 1. **Offene Arbeit zuerst:** `python3 clipper.py auto status` → für jede ID unter `offen` beim angegebenen Schritt weitermachen (auswahl → Schritt 3, posten → Schritt 5).
@@ -38,13 +41,13 @@ Alle Befehle im Ordner `clipper/` ausführen, mit `python3`. Lange Befehle im Hi
    - **YouTube:** `info` =
      ```json
      {"draft": <true|false>, "autoPublish": true, "providers": [{"network": "youtube"}],
-      "text": "<text_youtube>", "media": ["<url>"],
+      "text": "<text_youtube>", "media": ["<url_youtube>"],
       "publicationDate": {"dateTime": "<zeit>", "timezone": "Europe/Berlin"},
       "youtubeData": {"title": "<titel_youtube>", "type": "short", "privacy": "public",
                       "madeForKids": false, "category": "GAMING", "tags": [], "isAiGeneratedContent": false},
       "descendants": [], "firstCommentText": "", "shortener": false, "smartLinkData": {"ids": []}}
      ```
-   - **TikTok:** gleich, aber `"providers": [{"network": "tiktok"}]`, `"text": "<text_tiktok>"` und
+   - **TikTok:** gleich, aber `"providers": [{"network": "tiktok"}]`, `"text": "<text_tiktok>"`, `"media": ["<url>"]` (volle Länge, über 60 s für Creator Rewards) und
      `"tiktokData": {"title": "<titel_tiktok>", "privacyOption": "PUBLIC_TO_EVERYONE", "isAigc": false}` statt `youtubeData`.
    Nach Erfolg: `python3 clipper.py auto markiere <datei> geplant <plannerUrl>` (bei `draft: false`)
    bzw. `... markiere <datei> entwurf <plannerUrl>` (bei `draft: true`). Bei Fehler: `... markiere <datei> fehler <Grund>`.
