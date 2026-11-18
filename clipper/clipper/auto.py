@@ -178,20 +178,18 @@ def analysiere(vod: dict) -> Path:
 
 
 def _post_zeiten(anzahl: int, belegt: set[str]) -> list[str]:
-    """Nächste freie Slots, frühestens 90 Minuten ab jetzt (Berliner Zeit)."""
+    """Sofort veröffentlichen: erster Clip 20 Minuten ab jetzt (Zeit für Upload und Metricool),
+    jeder weitere 10 Minuten später. Feste Tages-Slots gibt es nicht mehr."""
     raus = []
-    frueh = jetzt() + dt.timedelta(minutes=90)
-    tag = frueh.date()
+    z = jetzt().replace(second=0, microsecond=0) + dt.timedelta(minutes=20)
+    z = z.replace(minute=z.minute - z.minute % 5)
     while len(raus) < anzahl:
-        for uhr in (POST_UHRZEITEN_GTA if gta_woche(tag) else POST_UHRZEITEN):
-            z = f"{tag.isoformat()}T{uhr}:00"
-            if z in belegt or dt.datetime.fromisoformat(z) < frueh or len(raus) >= anzahl:
-                continue
-            raus.append(z)
-            belegt.add(z)
-        tag += dt.timedelta(days=1)
+        s = z.isoformat(timespec="seconds")
+        if s not in belegt:
+            raus.append(s)
+            belegt.add(s)
+        z += dt.timedelta(minutes=10)
     return raus
-
 
 def rendere(vid: str) -> Path:
     ordner = ARBEIT / vid
