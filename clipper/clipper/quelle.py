@@ -60,6 +60,55 @@ def probe_dauer(datei: Path) -> float:
         return 0.0
 
 
+def _hls_abschnitt(url: str, fmt: str, start: float, ende: float | None, ziel: Path, nur_ton: bool) -> bool:
+    """Abschnitt eines Twitch-VODs direkt über die HLS-Playlist laden.
+
+    Bei laufenden Streams ist die Playlist noch offen; ffmpeg würde sie als Livestream lesen und
+    am Live-Ende in Echtzeit mitschneiden. Deshalb wird eine lokale, abgeschlossene Kopie mit nur
+    den nötigen Segmenten gebaut. Gibt False zurück, wenn das nicht geht (dann normaler Weg).
+    """
+    import urllib.parse
+    r = subprocess.run([_bin("yt-dlp"), "--no-warnings", "--no-playlist", "-f", fmt, "-g", url],
+                       capture_output=True, text=True, encoding="utf-8", errors="replace")
+    m3u8 = r.stdout.strip().splitlines()[0] if r.returncode == 0 and r.stdout.strip() else ""
+    if ".m3u8" not in m3u8:
+        return False
+    t = subprocess.run(["curl", "-sSfL", m3u8], capture_output=True, text=True, encoding="utf-8", errors="replace")
+    if t.returncode != 0:
+        return False
+    segmente, pos, dauer = [], 0.0, None
+    for zeile in t.stdout.splitlines():
+        zeile = zeile.strip()
+        if zeile.startswith("#EXTINF:"):
+            dauer = float(zeile[8:].split(",")[0])
+        elif zeile and not zeile.startswith("#") and dauer is not None:
+            segmente.append((pos, dauer, urllib.parse.urljoin(m3u8, zeile)))
+            pos += dauer
+            dauer = None
+    bis = ende if ende is not None else pos
+    wahl = [sg for sg in segmente if sg[0] + sg[1] > start and sg[0] < bis]
+    if not wahl:
+        return False
+    liste = ziel.parent / (ziel.stem + "_teil.m3u8")
+    zeilen = ["#EXTM3U", "#EXT-X-VERSION:3", "#EXT-X-PLAYLIST-TYPE:VOD",
+              f"#EXT-X-TARGETDURATION:{int(max(sg[1] for sg in wahl)) + 1}", "#EXT-X-MEDIA-SEQUENCE:0"]
+    for _, d, u in wahl:
+        zeilen += [f"#EXTINF:{d:.3f},", u]
+    zeilen.append("#EXT-X-ENDLIST")
+    liste.write_text("\n".join(zeilen) + "\n", encoding="utf-8")
+    versatz = max(0.0, start - wahl[0][0])
+    laenge = min(bis, wahl[-1][0] + wahl[-1][1]) - start
+    cmd = [_bin("ffmpeg"), "-y", "-v", "error", "-protocol_whitelist", "file,http,https,tcp,tls,crypto",
+           "-ss", f"{versatz:.3f}", "-i", str(liste), "-t", f"{laenge:.3f}"]
+    if nur_ton:
+        cmd += ["-vn", "-ac", "1", "-c:a", "aac", "-b:a", "96k"]
+    else:
+        cmd += ["-c:v", "libx264", "-preset", "veryfast", "-crf", "18", "-c:a", "aac", "-b:a", "160k"]
+    ok = subprocess.run(cmd + [str(ziel)]).returncode == 0 and ziel.is_file() and ziel.stat().st_size > 0
+    liste.unlink(missing_ok=True)
+    return ok
+
+
 def lade_audio(info: Info, ziel: Path, start: float | None = None, ende: float | None = None) -> Path:
     """Nur den Ton laden (klein, schnell). Bei lokaler Datei: Ton extrahieren."""
     ziel.mkdir(parents=True, exist_ok=True)
@@ -76,6 +125,9 @@ def lade_audio(info: Info, ziel: Path, start: float | None = None, ende: float |
         cmd += ["-vn", "-ac", "1", "-c:a", "aac", "-b:a", "96k", str(fertig)]
         subprocess.run(cmd, check=True)
         return fertig
+    if (start is not None or ende is not None) and "twitch.tv/videos" in info.url:
+        if _hls_abschnitt(info.url, "Audio_Only/bestaudio/worst", start or 0.0, ende, fertig, nur_ton=True):
+            return fertig
     cmd = [
         _bin("yt-dlp"), "--no-warnings", "--no-playlist", "-N", "8",
         "-f", "Audio_Only/bestaudio/worst",
@@ -107,6 +159,9 @@ def lade_abschnitt(info: Info, start: float, ende: float, ziel: Path) -> Path:
              "-c:a", "aac", "-b:a", "160k", str(ziel)],
             check=True,
         )
+        return ziel
+    if "twitch.tv/videos" in info.url and _hls_abschnitt(
+            info.url, "b[height<=1080]/best", start, ende, ziel, nur_ton=False):
         return ziel
     vorlage = ziel.with_suffix("")
     subprocess.run(

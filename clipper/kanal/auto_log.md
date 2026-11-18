@@ -5,3 +5,9 @@
 ## 2026-11-18
 - Rumathra (2931353146): 1 Clip geplant (GTA-Vorbestellung, Bew. 6, 20.11. 19:30), 1 Entwurf (Bew. 5, 20.11. 21:00). 17:30/19:30/21:00 am 18. und 19.11. waren schon belegt.
 - Dhalucard (2931305557): Auswahl geschrieben (1 Clip, Bew. 5), aber Rendern schlug fehl (ffmpeg Exit 234 bei subtitles-Filter). Schritt übersprungen, VOD bleibt offen.
+
+## 2026-11-18 (manueller GTA-6-Lauf)
+- GTA-Woche auf 18.11. vorgezogen (Release in Neuseeland, Streamer spielen schon).
+- Fix: laufende Streams wurden in Echtzeit mitgeschnitten; jetzt wird eine abgeschlossene Kopie der HLS-Playlist geladen.
+- Zarbex (2932216277-0): 3 Clips geplant (Bew. 7/6/6), Trymacs (2932202670-0): 3 Clips geplant (Bew. 7/7/6), heute 14:45–22:00.
+- xQc (2932113307-0): noch kein GTA-Gameplay, kein Clip >= 8.
