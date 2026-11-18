@@ -12,3 +12,4 @@
 - Zarbex (2932216277-0): 3 Clips geplant (Bew. 7/6/6), Trymacs (2932202670-0): 3 Clips geplant (Bew. 7/7/6), heute 14:45–22:00.
 - xQc (2932113307-0): noch kein GTA-Gameplay, kein Clip >= 8.
 - 2026-11-18 (Lauf 2): McKyTV (2931650509) spielt WoW statt GTA 6, keine brauchbaren Clips, VOD erledigt. Dhalucard (2931305557): Arbeitsordner weg, bleibt offen. Rumathra (2932163940-0): Analyse noch nicht fertig.
+- 2026-11-18 (Lauf 2): Rumathra (2932163940-0): 2 Clips geplant (Bew. 6, 16:05/16:15), 1 Entwurf (Bew. 5). Je YouTube+TikTok. Dhalucard (2931305557) bleibt offen (Arbeitsordner weg).
