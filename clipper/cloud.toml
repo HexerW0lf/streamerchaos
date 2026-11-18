@@ -8,5 +8,5 @@ zeitzone = "Europe/Berlin"
 
 # GTA-6-Woche (Release 19.11.2026): GTA-Streams zuerst, auch laufende Streams in Teilen,
 # englische Großstreamer (nur_gta_woche in watchlist.toml) aktiv, 5 Post-Slots pro Tag.
-gta_woche_start = "2026-11-19"
+gta_woche_start = "2026-11-18"
 gta_woche_ende = "2026-11-26"
