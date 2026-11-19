@@ -11,3 +11,7 @@
 - Fix: laufende Streams wurden in Echtzeit mitgeschnitten; jetzt wird eine abgeschlossene Kopie der HLS-Playlist geladen.
 - Zarbex (2932216277-0): 3 Clips geplant (Bew. 7/6/6), Trymacs (2932202670-0): 3 Clips geplant (Bew. 7/7/6), heute 14:45–22:00.
 - xQc (2932113307-0): noch kein GTA-Gameplay, kein Clip >= 8.
+
+## 2026-11-19
+- VOD 2931305557 (offen, Schritt auswahl) nicht mehr in der Watchlist/VOD nicht verfügbar: als erledigt markiert, übersprungen.
+- Trymacs 2932202670-8591 (3 Clips, 7/6/6) und zarbex 2932216277-7083 (2 Clips, 6/5): 4 geplant, 1 Entwurf. Posts starteten ab 07:25 (Start der Metricool-Zeit lag schon in der Vergangenheit, neu gesetzt).
