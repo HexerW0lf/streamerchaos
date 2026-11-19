@@ -15,3 +15,8 @@
 ## 2026-11-19
 - VOD 2931305557 (offen, Schritt auswahl) nicht mehr in der Watchlist/VOD nicht verfügbar: als erledigt markiert, übersprungen.
 - Trymacs 2932202670-8591 (3 Clips, 7/6/6) und zarbex 2932216277-7083 (2 Clips, 6/5): 4 geplant, 1 Entwurf. Posts starteten ab 07:25 (Start der Metricool-Zeit lag schon in der Vergangenheit, neu gesetzt).
+
+## 2026-11-19 Automatik-Lauf
+- trymacs 2932202670-67164: 2 Clips geplant, 1 Entwurf.
+- Analyse von zarbex (2932216277-65645) und mckytv (2932585029) wegen Zeitlimit abgebrochen, nicht bearbeitet.
+- Posts wegen Zeit-Slot um 10 Min verschoben (16:10-16:30).
