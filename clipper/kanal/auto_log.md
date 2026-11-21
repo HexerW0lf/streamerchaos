@@ -21,3 +21,4 @@
 - Analyse von zarbex (2932216277-65645) und mckytv (2932585029) wegen Zeitlimit abgebrochen, nicht bearbeitet.
 - Posts wegen Zeit-Slot um 10 Min verschoben (16:10-16:30).
 - 2026-11-20: 2 Teil-VODs (trymacs, zarbex) analysiert, 6 Clips: 3 geplant (online), 3 Entwurf. Keine Fehler.
+- 2026-11-21: mckytv 2935375333-0: 2 Clips (Bew. 6/6) geplant (online), 0 Entwurf. Analyse von zarbex 2934757548-0 und trymacs 2934796026-0 lieferte keine Ergebnisse (abgebrochen/Zeitlimit), nicht bearbeitet.
