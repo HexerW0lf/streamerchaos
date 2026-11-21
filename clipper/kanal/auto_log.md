@@ -22,3 +22,4 @@
 - Posts wegen Zeit-Slot um 10 Min verschoben (16:10-16:30).
 - 2026-11-20: 2 Teil-VODs (trymacs, zarbex) analysiert, 6 Clips: 3 geplant (online), 3 Entwurf. Keine Fehler.
 - 2026-11-21: mckytv 2935375333-0: 2 Clips (Bew. 6/6) geplant (online), 0 Entwurf. Analyse von zarbex 2934757548-0 und trymacs 2934796026-0 lieferte keine Ergebnisse (abgebrochen/Zeitlimit), nicht bearbeitet.
+- 2026-11-21: trymacs 2934796026-0 Analyse fehlgeschlagen (Audio beschädigt, danach VOD-ID nicht mehr gefunden); mckytv-Teil nicht analysiert (Zeitlimit). zarbex: 2 Clips online, 1 Entwurf.
