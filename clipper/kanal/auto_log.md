@@ -26,3 +26,7 @@
 ## 2026-11-22
 - Analyse von 2934757548-0 (zarbex) und 2934796026-0 (trymacs) übersprungen: Teilstücke von ~43 h, Audio-Download dauerte >25 min (Timeout). 2936403020-0 nicht mehr geschafft.
 - 2935950831 (Shlorox): 2 Clips geplant (Bewertung 7 und 6), je YouTube + TikTok.
+
+## 2026-11-23
+- Analysen von trymacs (2934796026) und zarbex (2934757548) abgebrochen (Download/Transkription Timeout 25 min), nächster Lauf neu versuchen.
+- mckytv 2937650382-33634: 3 Clips, 1 geplant (6), 2 Entwurf (5, 4; schwaches Material).
