@@ -35,3 +35,8 @@
 - Analysiert: zarbex (3 Clips), mckytv Teil 0 (2 Clips). Online geplant: 3 (je YouTube+TikTok), Entwurf: 2.
 - Fehler: handofblood 2934852868 – Render per ffmpeg fehlgeschlagen (Exit 234, Abschnitt 7394–7464); VOD bleibt offen. auswahl.json liegt bereit.
 - Hinweis: `zeit` aus `auto posts` lag nach langem Rendern in der Vergangenheit; Zeiten manuell neu gesetzt (07:30–08:10).
+
+## Automatik-Lauf 2026-11-24 (Nachmittag)
+- zarbex 2934757548 (47 h VOD): Analyse-Download zu lang, abgebrochen/übersprungen. 2934852868 nicht mehr in der Watchlist-Liste auffindbar (bleibt offen).
+- mckytv 2938758608-26537: 1 Clip (Bewertung 6) online geplant 16:10 (YouTube+TikTok).
+- trymacs 2938528021: Auswahl (1 Clip, Bewertung 5 = Entwurf) fertig, Render fehlgeschlagen: OpenAI/Whisper „no credits remaining“ (429). VOD bleibt offen.
