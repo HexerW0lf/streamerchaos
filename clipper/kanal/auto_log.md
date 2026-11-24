@@ -30,3 +30,8 @@
 ## 2026-11-23
 - Analysen von trymacs (2934796026) und zarbex (2934757548) abgebrochen (Download/Transkription Timeout 25 min), nächster Lauf neu versuchen.
 - mckytv 2937650382-33634: 3 Clips, 1 geplant (6), 2 Entwurf (5, 4; schwaches Material).
+
+## Automatik-Lauf 2026-11-24
+- Analysiert: zarbex (3 Clips), mckytv Teil 0 (2 Clips). Online geplant: 3 (je YouTube+TikTok), Entwurf: 2.
+- Fehler: handofblood 2934852868 – Render per ffmpeg fehlgeschlagen (Exit 234, Abschnitt 7394–7464); VOD bleibt offen. auswahl.json liegt bereit.
+- Hinweis: `zeit` aus `auto posts` lag nach langem Rendern in der Vergangenheit; Zeiten manuell neu gesetzt (07:30–08:10).
