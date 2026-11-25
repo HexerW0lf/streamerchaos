@@ -40,3 +40,6 @@
 - zarbex 2934757548 (47 h VOD): Analyse-Download zu lang, abgebrochen/übersprungen. 2934852868 nicht mehr in der Watchlist-Liste auffindbar (bleibt offen).
 - mckytv 2938758608-26537: 1 Clip (Bewertung 6) online geplant 16:10 (YouTube+TikTok).
 - trymacs 2938528021: Auswahl (1 Clip, Bewertung 5 = Entwurf) fertig, Render fehlgeschlagen: OpenAI/Whisper „no credits remaining“ (429). VOD bleibt offen.
+
+## Automatik-Lauf 2026-11-25
+- Analyse mckytv 2939570856 fehlgeschlagen: OpenAI/Whisper 429 „no credits remaining“. Keine Clips erstellt, nichts geplant. Offen: 2934852868, 2938528021 (Arbeitsordner nicht mehr vorhanden, brauchen neue Analyse).
