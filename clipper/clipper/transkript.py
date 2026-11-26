@@ -125,6 +125,16 @@ def transkribiere(audio: Path, start: float, ende: float, audio_offset: float,
     """`start`/`ende` absolut; `audio_offset` = absolute Zeit, bei der audio.m4a beginnt."""
     cache.mkdir(parents=True, exist_ok=True)
     schluessel = cache / f"w_{int(start * 10)}_{int(ende * 10)}.json"
+    if not schluessel.is_file():
+        # Schon transkribiertes Kandidaten-Fenster, das den Clip ganz abdeckt? Dann wiederverwenden (spart Zeit)
+        for f in cache.glob("w_*_*.json"):
+            try:
+                a, b = (int(x) / 10 for x in f.stem.split("_")[1:3])
+            except ValueError:
+                continue
+            if a <= start + 0.5 and b >= ende - 0.5:
+                alle = transkribiere(audio, a, b, audio_offset, sprache, cache)
+                return [w for w in alle if w.ende > start and w.start < ende]
     if schluessel.is_file():
         daten = json.loads(schluessel.read_text(encoding="utf-8"))
     else:
