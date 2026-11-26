@@ -43,3 +43,7 @@
 
 ## Automatik-Lauf 2026-11-25
 - Analyse mckytv 2939570856 fehlgeschlagen: OpenAI/Whisper 429 „no credits remaining“. Keine Clips erstellt, nichts geplant. Offen: 2934852868, 2938528021 (Arbeitsordner nicht mehr vorhanden, brauchen neue Analyse).
+
+## Lauf 2026-11-26
+- Analyse von 2940283974, 2940305752, 2939354041 fehlgeschlagen: OpenAI Whisper 429 insufficient_quota (Guthaben leer). Keine Clips erzeugt.
+- Offene Jobs 2934852868 / 2938528021 nicht mehr analysierbar (Arbeitsordner weg, nicht in Watchlist); unverändert gelassen.
