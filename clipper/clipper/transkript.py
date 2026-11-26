@@ -81,7 +81,13 @@ _OPENAI_KAPUTT = os.environ.get("CLIPPER_TRANSKRIPT") == "lokal"
 
 def _lokal(datei: Path, sprache: str) -> dict:
     global _MODELL
-    from faster_whisper import WhisperModel  # pip install faster-whisper
+    try:
+        from faster_whisper import WhisperModel
+    except ImportError:  # Cloud-Setup-Skript ist evtl. zwischengespeichert -> selbst nachinstallieren
+        import sys
+        subprocess.run([sys.executable, "-m", "pip", "install", "-q", "--break-system-packages", "faster-whisper"],
+                       check=True)
+        from faster_whisper import WhisperModel
     with _SPERRE:
         if _MODELL is None:
             name = os.environ.get("CLIPPER_WHISPER_MODELL", "small")
