@@ -48,3 +48,8 @@
 - Offene Jobs 2934852868/2938528021 ohne Arbeitsordner (Container neu) → neu eingereiht, nicht bearbeitet.
 - faster-whisper musste nachinstalliert werden; OpenAI-Guthaben leer (429), lokales Whisper nutzt CPU und ist langsam. Nur 1 VOD (rumathra, 2940283974) geschafft; dhalucard/zarbex nicht analysiert.
 - 1 Clip geplant (13:57), 1 Entwurf (Bewertung 5). Kandidaten waren schwach (viel Gespräch, wenig GTA).
+
+## Lauf 2026-11-26
+- 3 VODs (rumathra, rewinside, mckytv), 5 Clips geplant (alle Bewertung 6), 0 Entwürfe.
+- OpenAI-Whisper ohne Credits (429) → lokales Whisper benutzt.
+- Buffer-YouTube erlaubt max. 2 Posts/Tag: 2 YT-Posts heute, 4 auf 27./28.11. (12:00/18:00) verschoben. TikTok alle heute.
