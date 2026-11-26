@@ -43,3 +43,8 @@
 
 ## Automatik-Lauf 2026-11-25
 - Analyse mckytv 2939570856 fehlgeschlagen: OpenAI/Whisper 429 „no credits remaining“. Keine Clips erstellt, nichts geplant. Offen: 2934852868, 2938528021 (Arbeitsordner nicht mehr vorhanden, brauchen neue Analyse).
+
+## Lauf 2026-11-26
+- Offene Jobs 2934852868/2938528021 ohne Arbeitsordner (Container neu) → neu eingereiht, nicht bearbeitet.
+- faster-whisper musste nachinstalliert werden; OpenAI-Guthaben leer (429), lokales Whisper nutzt CPU und ist langsam. Nur 1 VOD (rumathra, 2940283974) geschafft; dhalucard/zarbex nicht analysiert.
+- 1 Clip geplant (13:57), 1 Entwurf (Bewertung 5). Kandidaten waren schwach (viel Gespräch, wenig GTA).
