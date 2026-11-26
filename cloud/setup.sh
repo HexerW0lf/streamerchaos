@@ -5,6 +5,6 @@ set -euo pipefail
 export DEBIAN_FRONTEND=noninteractive
 apt-get update -qq
 apt-get install -y -qq ffmpeg fonts-dejavu-core >/dev/null
-python3 -m pip install -q --break-system-packages -U yt-dlp numpy
+python3 -m pip install -q --break-system-packages -U yt-dlp numpy faster-whisper
 ffmpeg -version | head -1
 yt-dlp --version

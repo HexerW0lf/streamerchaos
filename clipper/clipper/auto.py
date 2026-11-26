@@ -32,6 +32,7 @@ ARBEIT = PROJEKT / "arbeit" / "auto"
 VEROEFF = PROJEKT / "veroeffentlichen"
 
 POST_UHRZEITEN = ("17:30", "19:30", "21:00")  # nach der Arbeit
+TEIL_MAX = 4 * 3600  # Sekunden pro Analyse-Stück
 YT_MAX = 58  # Sekunden; YouTube blockt Shorts > 60 s mit Copyright-Anspruch
 POST_UHRZEITEN_GTA =("12:00", "15:00", "17:30", "19:30", "21:00")  # GTA-6-Woche: mehr Posts
 
@@ -101,6 +102,13 @@ def neue_vods(max_pro_kanal: int = 1, max_alter_tage: int = 3) -> list[dict]:
     Job-ID = VOD-ID, oder `VOD-ID-STARTSEKUNDE` für Teilstücke eines (noch laufenden) Streams.
     """
     status = lade_status()
+    # Die Cloud vergisst arbeit/ zwischen Läufen: offene Jobs ohne Arbeitsordner neu einreihen
+    tot = [i for i in status["offen"] if not (ARBEIT / i).is_dir()]
+    if tot:
+        for i in tot:
+            status["offen"].pop(i)
+        speichere_status(status)
+        print(f"[auto] {len(tot)} offene Jobs ohne Arbeitsordner neu eingereiht: {', '.join(tot)}")
     teile = status.get("teile", {})
     offen_vods = {str(o.get("vod", i.split("-")[0])) for i, o in status["offen"].items()}
     woche = gta_woche()
@@ -133,16 +141,20 @@ def neue_vods(max_pro_kanal: int = 1, max_alter_tage: int = 3) -> list[dict]:
             bis = float(teile.get(vid, 0))
             if dauer - bis < (45 * 60 if laeuft else 10 * 60 if bis else 30 * 60):
                 continue
+            ende = dauer if laeuft else k.get("ende")
+            teil = laeuft
+            if dauer - bis > TEIL_MAX:  # sehr lange Streams in Stücken (Download passt sonst nicht ins Zeitlimit)
+                ende, teil = bis + TEIL_MAX, True
             profil = k.get("profil", "standard")
             if woche and gta:
                 profil = "gta6_en" if k.get("sprache") == "en" else "gta6"
-            raus.append({"id": f"{vid}-{int(bis)}" if (laeuft or bis) else vid, "vod": vid,
+            raus.append({"id": f"{vid}-{int(bis)}" if (teil or bis) else vid, "vod": vid,
                          "kanal": name, "titel": titel, "dauer": dauer, "profil": profil,
                          "max_clips": int(k.get("max_clips", 4)),
                          "min_bewertung": int(k.get("min_bewertung", 0)),
                          "sprache": k.get("sprache", "de"),
-                         "start": bis or k.get("start"), "ende": dauer if laeuft else k.get("ende"),
-                         "teil": laeuft, "gta": gta})
+                         "start": bis or k.get("start"), "ende": ende,
+                         "teil": teil, "gta": gta})
             gefunden += 1
             if gefunden >= max_pro_kanal:
                 break
@@ -289,15 +301,28 @@ def erledigt(vid: str) -> None:
 
 
 def aufraeumen() -> int:
-    """Clips löschen, deren Entwürfe in Metricool angelegt sind.
+    """Clips löschen, deren Posts erledigt sind.
 
-    Metricool kopiert das Video beim Anlegen in den eigenen Speicher, danach wird die
-    öffentliche Kopie im clips-Branch nicht mehr gebraucht.
+    Buffer lädt das Video erst zur Veröffentlichung von der URL. Darum bleibt ein Clip im
+    clips-Branch, bis sein Post-Zeitpunkt mindestens 1 Tag vorbei ist. Entwürfe nach 7 Tagen,
+    Fehler-Posts nach 3 Tagen.
     """
+    grenze = jetzt() - dt.timedelta(days=1)
     weg = 0
     for f in VEROEFF.glob("*/posts.json"):
         posts = json.loads(f.read_text(encoding="utf-8"))
-        if posts and all(p["status"] in ("entwurf", "geplant") for p in posts):
+
+        def fertig(p: dict) -> bool:
+            zeit = dt.datetime.fromisoformat(p["zeit"]) if p.get("zeit") else grenze
+            if p["status"] == "geplant":
+                return zeit < grenze
+            if p["status"] == "entwurf":  # Nutzer plant Entwürfe evtl. später selbst ein
+                return zeit < grenze - dt.timedelta(days=6)
+            if p["status"] == "fehler":
+                return zeit < grenze - dt.timedelta(days=2)
+            return False
+
+        if posts and all(fertig(p) for p in posts):
             shutil.rmtree(f.parent)
             weg += 1
     return weg

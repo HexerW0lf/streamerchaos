@@ -25,14 +25,14 @@ Den OpenAI-Key **nur** als Network secret eintragen, nicht als Umgebungsvariable
 | Umgebung | StreamerChaos |
 | Modell | Sonnet |
 | Zeitplan | täglich, z. B. 06:07 und 15:07 Uhr (eigener Cron: `7 6,15 * * *`) |
-| Connectoren | nur **Metricool** (Gmail entfernen) |
+| Connectoren | nur **Buffer** (Metricool und Gmail aus) |
 | Prompt | `Lies cloud/AUFGABE.md und führe die Aufgabe genau so aus.` |
 
 ## 4. Erster Test
 - Bei der Aufgabe auf **„Jetzt ausführen“** klicken.
 - Vorher in `clipper/watchlist.toml` mindestens einen Streamer mit Erlaubnis auf `aktiv = true` setzen und pushen
   (oder Claude im Chat bitten).
-- Danach in Metricool unter **Entwürfe** nachsehen.
+- Danach in Buffer unter **Entwürfe** bzw. **Queue** nachsehen.
 
 ## Jeden Abend (5–10 Minuten)
-Metricool-App öffnen → Entwürfe → Clip ansehen → **Planen** (oder löschen).
+Buffer-App öffnen → Entwürfe → Clip ansehen → **Planen** (oder löschen). Clips ab Bewertung 6 gehen von selbst online.

@@ -6,6 +6,7 @@ import json
 import os
 import shutil
 import subprocess
+import threading
 import time
 import urllib.error
 import urllib.request
@@ -72,6 +73,47 @@ def _whisper(datei: Path, sprache: str) -> dict:
     raise RuntimeError("unerreichbar")
 
 
+# --- Kostenloser Rückfall: faster-whisper lokal auf der CPU (z. B. wenn OpenAI-Guthaben leer ist) ---
+_MODELL = None
+_SPERRE = threading.Lock()
+_OPENAI_KAPUTT = os.environ.get("CLIPPER_TRANSKRIPT") == "lokal"
+
+
+def _lokal(datei: Path, sprache: str) -> dict:
+    global _MODELL
+    from faster_whisper import WhisperModel  # pip install faster-whisper
+    with _SPERRE:
+        if _MODELL is None:
+            name = os.environ.get("CLIPPER_WHISPER_MODELL", "small")
+            print(f"[transkript] lokales Modell {name} (faster-whisper, CPU)")
+            _MODELL = WhisperModel(name, device="cpu", compute_type="int8")
+        # Audio selbst per ffmpeg dekodieren (16 kHz mono float), unabhängig von PyAV-Versionen
+        import numpy as np
+        roh = subprocess.run([shutil.which("ffmpeg") or "ffmpeg", "-v", "error", "-i", str(datei),
+                              "-ac", "1", "-ar", "16000", "-f", "f32le", "-"],
+                             capture_output=True, check=True).stdout
+        ton = np.frombuffer(roh, dtype=np.float32)
+        segmente, _ = _MODELL.transcribe(ton, language=sprache, word_timestamps=True, vad_filter=False)
+        segs, woerter = [], []
+        for s in segmente:
+            segs.append({"start": s.start, "end": s.end, "text": s.text})
+            for w in s.words or []:
+                woerter.append({"start": w.start, "end": w.end, "word": w.word})
+    return {"segments": segs, "words": woerter}
+
+
+def _transkribiere_datei(datei: Path, sprache: str) -> dict:
+    """OpenAI zuerst; schlägt das fehl (z. B. 429 kein Guthaben), ab dann lokal."""
+    global _OPENAI_KAPUTT
+    if not _OPENAI_KAPUTT:
+        try:
+            return _whisper(datei, sprache)
+        except (SystemExit, Exception) as e:  # noqa: BLE001
+            print(f"[transkript] OpenAI nicht nutzbar ({str(e)[:120]}), nehme lokales Whisper")
+            _OPENAI_KAPUTT = True
+    return _lokal(datei, sprache)
+
+
 def transkribiere(audio: Path, start: float, ende: float, audio_offset: float,
                   sprache: str, cache: Path) -> list[Wort]:
     """`start`/`ende` absolut; `audio_offset` = absolute Zeit, bei der audio.m4a beginnt."""
@@ -87,7 +129,7 @@ def transkribiere(audio: Path, start: float, ende: float, audio_offset: float,
              "-ac", "1", "-ar", "16000", "-b:a", "48k", str(mp3)],
             check=True,
         )
-        daten = _whisper(mp3, sprache)
+        daten = _transkribiere_datei(mp3, sprache)
         schluessel.write_text(json.dumps(daten, ensure_ascii=False), encoding="utf-8")
         mp3.unlink(missing_ok=True)
     woerter = [Wort(start + float(w["start"]), start + float(w["end"]), str(w["word"]).strip())

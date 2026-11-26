@@ -5,8 +5,9 @@ Alle Befehle im Ordner `clipper/` ausführen, mit `python3`. Lange Befehle im Hi
 
 ## Feste Regeln
 
-- **Veröffentlichen nach Bewertung:** Clips mit `bewertung` **≥ 6** werden in Metricool fest geplant (`draft: false`)
-  und gehen zur geplanten Zeit automatisch online. Clips mit `bewertung` < 6 nur als **Entwurf** (`draft: true`).
+- **Veröffentlichen nach Bewertung:** Clips mit `bewertung` **≥ 6** werden in **Buffer** fest geplant
+  und gehen zur geplanten Zeit automatisch online. Clips mit `bewertung` < 6 nur als **Entwurf** (`saveToDraft: true`).
+- **Posten läuft über Buffer** (Connector „Buffer“), nicht mehr über Metricool (Gratis-Limit 20/Monat).
 - Ziel: mindestens 1, besser 2–3 Clips pro Tag online.
 - **GTA-6-Woche (19.–26.11.2026, Befehl `python3 clipper.py auto gta`):** GTA-6-Streams haben Vorrang, auch laufende
   Streams werden in Teilstücken analysiert (Job-IDs wie `2931472843-3600`). Englische Großstreamer (xQc, Kai Cenat, ...)
@@ -14,7 +15,8 @@ Alle Befehle im Ordner `clipper/` ausführen, mit `python3`. Lange Befehle im Hi
   Hauptfokus bleibt Deutsch. Clips gehen sofort nach dem Fertigwerden online.
 - Nur Streamer aus `clipper/watchlist.toml` mit `aktiv = true` (vom Kanalbetreiber freigegeben).
 - Titel ehrlich: Spiel richtig benennen (kein „GTA 6“ bei anderem Spiel).
-- Keine Mails senden. Keine anderen Metricool-Tools als `getScheduledPosts` und `createScheduledPost` benutzen.
+- Keine Mails senden. Metricool nicht mehr benutzen. Von Buffer nur `get_account`, `list_channels`, `list_posts`,
+  `create_post` und `get_post` benutzen (nie `delete_post`, nie `mode: "shareNow"`).
 - Bei Fehlern: Schritt überspringen, am Ende kurz in `clipper/kanal/auto_log.md` notieren.
 
 - **Urheberrecht YouTube:** Shorts über 60 s mit Copyright-Anspruch (z. B. ContentView bei MontanaBlack) sperrt YouTube
@@ -33,27 +35,26 @@ Alle Befehle im Ordner `clipper/` ausführen, mit `python3`. Lange Befehle im Hi
 4. **Rendern:** `python3 clipper.py auto render <ID>`.
 5. **Bereitstellen:** `python3 clipper.py auto hochladen` (pusht die Clips in den Branch `clips`).
    Danach `python3 clipper.py auto posts` → Liste der neuen Clips mit `url`.
-6. **Metricool-Posts:** Sofort veröffentlichen, keine festen Slots mehr.
-   Lege für **jeden** Clip **zwei** Posts mit `createScheduledPost` an (blogId `8154528`, Datum = `zeit` mit `+01:00`).
-   `draft` = `false`, wenn `bewertung` ≥ 6, sonst `true`. Die `zeit` ist schon „jetzt + 20 Minuten“ (je Clip 10 Minuten
-   später), egal was sonst geplant ist. Liegt sie beim Anlegen weniger als 5 Minuten in der Zukunft, jetzt + 10 Minuten nehmen.
-   Englische Clips (`sprache` = `en`): im YouTube-Text bleibt alles deutsch, der Streamer wird genannt.
-   - **YouTube:** `info` =
-     ```json
-     {"draft": <true|false>, "autoPublish": true, "providers": [{"network": "youtube"}],
-      "text": "<text_youtube>", "media": ["<url_youtube>"],
-      "publicationDate": {"dateTime": "<zeit>", "timezone": "Europe/Berlin"},
-      "youtubeData": {"title": "<titel_youtube>", "type": "short", "privacy": "public",
-                      "madeForKids": false, "category": "GAMING", "tags": [], "isAiGeneratedContent": false},
-      "descendants": [], "firstCommentText": "", "shortener": false, "smartLinkData": {"ids": []}}
-     ```
-   - **TikTok:** gleich, aber `"providers": [{"network": "tiktok"}]`, `"text": "<text_tiktok>"`, `"media": ["<url>"]` (volle Länge, über 60 s für Creator Rewards) und
-     `"tiktokData": {"title": "<titel_tiktok>", "privacyOption": "PUBLIC_TO_EVERYONE", "isAigc": false}` statt `youtubeData`.
-   Nach Erfolg: `python3 clipper.py auto markiere <datei> geplant <plannerUrl>` (bei `draft: false`)
-   bzw. `... markiere <datei> entwurf <plannerUrl>` (bei `draft: true`). Bei Fehler: `... markiere <datei> fehler <Grund>`.
+6. **Buffer-Posts:** Organisation `6b081f4849efbb866321d152`. Kanäle: YouTube `6b081f818541f09ecbae8024`,
+   TikTok `6b081fe68541f09ecbae8aa4` (stehen auch in `clipper/cloud.toml`; bei 404 mit `list_channels` neu holen).
+   Gratis-Plan: höchstens 10 geplante Posts pro Kanal gleichzeitig. Vorher mit `list_posts` (status `scheduled`) zählen;
+   ist ein Kanal voll, die restlichen Clips als Entwurf anlegen.
+   Lege für **jeden** Clip **zwei** Posts mit `create_post` an, `schedulingType: "automatic"`.
+   Bei `bewertung` ≥ 6: `mode: "customScheduled"`, `dueAt` = `zeit` + `+01:00` (z. B. `2026-11-26T18:20:00+01:00`).
+   Liegt `zeit` weniger als 5 Minuten in der Zukunft, jetzt + 10 Minuten nehmen. Bei `bewertung` < 6: `saveToDraft: true`.
+   Englische Clips (`sprache` = `en`): Texte bleiben deutsch, der Streamer wird genannt.
+   - **YouTube:** `channelId` YouTube, `text` = `<text_youtube>`,
+     `assets` = `[{"video": {"url": "<url_youtube>"}}]` (max. 58 s, wegen Copyright-Sperre),
+     `metadata` = `{"youtube": {"type": "short", "title": "<titel_youtube>", "categoryId": "20", "privacy": "public",
+     "madeForKids": false, "notifySubscribers": true, "isAiGenerated": false}}`
+   - **TikTok:** `channelId` TikTok, `text` = `<text_tiktok>`, `assets` = `[{"video": {"url": "<url>"}}]` (volle Länge),
+     `metadata` = `{"tiktok": {"title": "<titel_tiktok>", "isAiGenerated": false}}`
+   Nach Erfolg: `python3 clipper.py auto markiere <datei> geplant buffer:<post-id>` (geplant)
+   bzw. `... markiere <datei> entwurf buffer:<post-id>` (Entwurf). Bei Fehler: `... markiere <datei> fehler <Grund>`.
 7. **Abschluss je VOD:** `python3 clipper.py auto erledigt <ID>`.
 8. **Aufräumen:** `python3 clipper.py auto aufraeumen`, danach nochmal `python3 clipper.py auto hochladen`
-   (Metricool hat die Videos dann schon kopiert; die öffentliche Kopie wird entfernt).
+   (Buffer lädt das Video erst beim Veröffentlichen; `aufraeumen` löscht Clips darum erst 1 Tag nach dem Post,
+   Entwürfe nach 7 Tagen).
 9. **Speichern:** Änderungen an `clipper/kanal/auto_status.json`, `clipper/kanal/auto_log.md` und `clipper/veroeffentlichen/`
    committen (`git add -A clipper/kanal clipper/veroeffentlichen`) und auf `main` pushen (Nachricht: „Automatik-Lauf <Datum>“). Die `.mp4`-Dateien NICHT auf main committen (stehen in .gitignore).
 10. Kurze Zusammenfassung: wie viele VODs, wie viele Clips geplant (online), wie viele nur Entwurf, Fehler.

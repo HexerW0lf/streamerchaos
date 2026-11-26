@@ -10,3 +10,8 @@ zeitzone = "Europe/Berlin"
 # englische Großstreamer (nur_gta_woche in watchlist.toml) aktiv, 5 Post-Slots pro Tag.
 gta_woche_start = "2026-11-18"
 gta_woche_ende = "2026-11-26"
+
+# Buffer (Posten, Gratis-Plan: 3 Kanäle, 10 geplante Posts je Kanal)
+buffer_organisation = "6b081f4849efbb866321d152"
+buffer_youtube = "6b081f818541f09ecbae8024"
+buffer_tiktok = "6b081fe68541f09ecbae8aa4"
