@@ -6,6 +6,12 @@ github_repo = "HexerW0lf/streamerchaos"
 metricool_brand_id = "8154528"
 zeitzone = "Europe/Berlin"
 
+# Posten: feste Uhrzeiten (max. 3/Tag, mind. 2 h Abstand, 12–23 Uhr). YouTube über Buffer max. 2/Tag.
+post_uhrzeiten_tiktok = ["13:00", "17:00", "21:00"]
+post_uhrzeiten_youtube = ["13:00", "19:00"]
+# Pause: bis einschließlich diesem Tag nichts Neues planen (Nutzer-Wunsch 27.11.2026)
+pause_bis = "2026-11-28"
+
 # GTA-6-Woche (Release 19.11.2026): GTA-Streams zuerst, auch laufende Streams in Teilen,
 # englische Großstreamer (nur_gta_woche in watchlist.toml) aktiv, 5 Post-Slots pro Tag.
 gta_woche_start = "2026-11-18"

@@ -31,10 +31,14 @@ STATUS = PROJEKT / "kanal" / "auto_status.json"
 ARBEIT = PROJEKT / "arbeit" / "auto"
 VEROEFF = PROJEKT / "veroeffentlichen"
 
-POST_UHRZEITEN = ("17:30", "19:30", "21:00")  # nach der Arbeit
+# Feste Post-Zeiten (Nutzer-Wunsch 27.11.2026): höchstens 3 pro Tag, mindestens 2 h Abstand, 12–23 Uhr.
+# YouTube über Buffer: höchstens 2 Posts pro Tag. Überschreibbar in cloud.toml.
+POST_UHRZEITEN_TIKTOK = ("13:00", "17:00", "21:00")
+POST_UHRZEITEN_YOUTUBE = ("13:00", "19:00")
+MIN_VORLAUF = dt.timedelta(minutes=60)  # Zeit für Upload und Buffer
+AUTO_POST_AB = 6  # ab dieser Bewertung fest geplant, darunter Entwurf
 TEIL_MAX = 4 * 3600  # Sekunden pro Analyse-Stück
 YT_MAX = 58  # Sekunden; YouTube blockt Shorts > 60 s mit Copyright-Anspruch
-POST_UHRZEITEN_GTA =("12:00", "15:00", "17:30", "19:30", "21:00")  # GTA-6-Woche: mehr Posts
 
 try:
     from zoneinfo import ZoneInfo
@@ -190,19 +194,39 @@ def analysiere(vod: dict) -> Path:
     return ordner / "auswahl_prompt.md"
 
 
-def _post_zeiten(anzahl: int, belegt: set[str]) -> list[str]:
-    """Sofort veröffentlichen: erster Clip 20 Minuten ab jetzt (Zeit für Upload und Metricool),
-    jeder weitere 10 Minuten später. Feste Tages-Slots gibt es nicht mehr."""
-    raus = []
-    z = jetzt().replace(second=0, microsecond=0) + dt.timedelta(minutes=20)
-    z = z.replace(minute=z.minute - z.minute % 5)
+def _post_zeiten(anzahl: int, belegt: set[str], slots: tuple[str, ...]) -> list[str]:
+    """Nächste freie feste Slots. Nicht vor jetzt + MIN_VORLAUF und nicht während einer Pause
+    (`pause_bis` in cloud.toml, einschließlich dieses Tages)."""
+    c = _cloud()
+    slots = tuple(slots)
+    start = jetzt() + MIN_VORLAUF
+    if c.get("pause_bis"):
+        nach_pause = dt.datetime.combine(dt.date.fromisoformat(c["pause_bis"]) + dt.timedelta(days=1), dt.time())
+        start = max(start, nach_pause)
+    raus: list[str] = []
+    tag = start.date()
     while len(raus) < anzahl:
-        s = z.isoformat(timespec="seconds")
-        if s not in belegt:
-            raus.append(s)
-            belegt.add(s)
-        z += dt.timedelta(minutes=10)
+        for hhmm in slots:
+            z = dt.datetime.combine(tag, dt.time.fromisoformat(hhmm))
+            s_ = z.isoformat(timespec="seconds")
+            if z >= start and s_ not in belegt and len(raus) < anzahl:
+                raus.append(s_)
+                belegt.add(s_)
+        tag += dt.timedelta(days=1)
     return raus
+
+
+def _belegt(feld: str) -> set[str]:
+    """Schon vergebene Post-Zeiten (nur fest geplante Clips, keine Entwürfe/Fehler)."""
+    raus = set()
+    for p in alle_posts():
+        if p.get("status") in ("entwurf", "fehler") or int(p.get("bewertung") or 0) < AUTO_POST_AB:
+            continue
+        z = p.get(feld) or p.get("zeit")
+        if z:
+            raus.add(z)
+    return raus
+
 
 def rendere(vid: str) -> Path:
     ordner = ARBEIT / vid
@@ -217,8 +241,13 @@ def rendere(vid: str) -> Path:
     audio_start = float(meta.get("start") or 0)
     ziel = VEROEFF / vid
     ziel.mkdir(parents=True, exist_ok=True)
-    belegt = {p["zeit"] for p in alle_posts()}
-    zeiten = _post_zeiten(len(clips), belegt)
+    c_cfg = _cloud()
+    geplant = [c for c in clips if c.bewertung >= AUTO_POST_AB]
+    zeiten_tt = iter(_post_zeiten(len(geplant), _belegt("zeit"),
+                                  c_cfg.get("post_uhrzeiten_tiktok", POST_UHRZEITEN_TIKTOK)))
+    zeiten_yt = iter(_post_zeiten(len(geplant), _belegt("zeit_youtube"),
+                                  c_cfg.get("post_uhrzeiten_youtube", POST_UHRZEITEN_YOUTUBE)))
+    entwurf_zeit = jetzt().replace(second=0, microsecond=0).isoformat(timespec="seconds")
     posts = []
     for nr, c in enumerate(clips, 1):
         if info.dauer:
@@ -246,7 +275,8 @@ def rendere(vid: str) -> Path:
         posts.append({
             "datei": datei.relative_to(PROJEKT).as_posix(),
             "datei_youtube": datei_yt.relative_to(PROJEKT).as_posix(),
-            "zeit": zeiten[nr - 1],
+            "zeit": next(zeiten_tt) if c.bewertung >= AUTO_POST_AB else entwurf_zeit,  # TikTok
+            "zeit_youtube": next(zeiten_yt) if c.bewertung >= AUTO_POST_AB else entwurf_zeit,
             "titel_youtube": c.titel_youtube[:100],
             "titel_tiktok": c.titel_tiktok,
             "text_youtube": f"{c.beschreibung}\n\n{quelle_txt}\n\n{' '.join(tags)}",
@@ -313,7 +343,8 @@ def aufraeumen() -> int:
         posts = json.loads(f.read_text(encoding="utf-8"))
 
         def fertig(p: dict) -> bool:
-            zeit = dt.datetime.fromisoformat(p["zeit"]) if p.get("zeit") else grenze
+            zeiten = [dt.datetime.fromisoformat(z) for z in (p.get("zeit"), p.get("zeit_youtube")) if z]
+            zeit = max(zeiten) if zeiten else grenze  # spätester Post (YouTube oft später als TikTok)
             if p["status"] == "geplant":
                 return zeit < grenze
             if p["status"] == "entwurf":  # Nutzer plant Entwürfe evtl. später selbst ein

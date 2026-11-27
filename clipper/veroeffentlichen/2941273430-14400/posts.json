@@ -45,7 +45,8 @@
   "vod": "2941273430",
   "sprache": "de",
   "status": "geplant",
-  "info": "buffer:6b09973832c212878fdaad74,6b09971fb83ec61257d5e46f"
+  "info": "buffer:6b09973832c212878fdaad74,6b09971fb83ec61257d5e46f",
+  "zeit_youtube": "2026-12-01T19:00:00"
  },
  {
   "datei": "veroeffentlichen/2941273430-14400/03_zarbex-verzweifelt-in-gta-6-am.mp4",
@@ -69,6 +70,7 @@
   "vod": "2941273430",
   "sprache": "de",
   "status": "geplant",
-  "info": "buffer:6b09973932c212878fdaadc2,6b09972118c8c6749bf1a61d"
+  "info": "buffer:6b09973932c212878fdaadc2,6b09972118c8c6749bf1a61d",
+  "zeit_youtube": "2026-12-02T13:00:00"
  }
 ]
