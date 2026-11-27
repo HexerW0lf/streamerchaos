@@ -53,3 +53,8 @@
 - 3 VODs (rumathra, rewinside, mckytv), 5 Clips geplant (alle Bewertung 6), 0 Entwürfe.
 - OpenAI-Whisper ohne Credits (429) → lokales Whisper benutzt.
 - Buffer-YouTube erlaubt max. 2 Posts/Tag: 2 YT-Posts heute, 4 auf 27./28.11. (12:00/18:00) verschoben. TikTok alle heute.
+
+## Automatik-Lauf 2026-11-27
+- 2941273430-0 (zarbex, GTA 6): 3 Clips (Bew. 7/6/6) gerendert; je 1 TikTok-Post am 27.11. (07:05/07:20/07:35) und 1 YouTube-Short am 29.11. 12:00, 29.11. 18:00, 30.11. 12:00 (YouTube-Tageslimit 2 Posts/Tag, 27. und 28.11. schon voll).
+- 2941286318-0 (dhalucard): Analyse ok (nur Kartenspiel, schwach), Rendern per ffmpeg-Fehler (Exit 234) fehlgeschlagen -> übersprungen, nicht erledigt markiert.
+- OpenAI-Whisper: keine Credits (429), lokales Whisper genutzt.
