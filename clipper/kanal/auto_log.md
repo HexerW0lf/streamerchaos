@@ -58,3 +58,10 @@
 - 2941273430-0 (zarbex, GTA 6): 3 Clips (Bew. 7/6/6) gerendert; je 1 TikTok-Post am 27.11. (07:05/07:20/07:35) und 1 YouTube-Short am 29.11. 12:00, 29.11. 18:00, 30.11. 12:00 (YouTube-Tageslimit 2 Posts/Tag, 27. und 28.11. schon voll).
 - 2941286318-0 (dhalucard): Analyse ok (nur Kartenspiel, schwach), Rendern per ffmpeg-Fehler (Exit 234) fehlgeschlagen -> übersprungen, nicht erledigt markiert.
 - OpenAI-Whisper: keine Credits (429), lokales Whisper genutzt.
+
+## Lauf 2026-11-27
+- VODs: zarbex (2941273430-14400), rumathra (2940283974-28800), dhalucard (2941286318-0, offen vom Vorlauf neu analysiert).
+- Geplant: 5 TikTok (heute 15:58–16:38) + 4 YouTube (30.11./01.12., da YouTube-Tageslimit 2 erreicht); 1 YouTube-Entwurf (Asteroiden-Clip).
+- Fehler: dhalucard-Clip (Bewertung 5, nur Entwurf) – ffmpeg-Render schlug fehl (Exit 234), übersprungen.
+- Hinweis: OpenAI-Whisper ohne Guthaben (429), lokales Whisper genutzt. Buffer: YouTube max. 2 Posts pro Tag.
+- Rumathra-Stream zeigt kein GTA, sondern ein Weltraum-Abbauspiel (Titel daher ohne GTA).
