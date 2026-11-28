@@ -65,3 +65,8 @@
 - Fehler: dhalucard-Clip (Bewertung 5, nur Entwurf) – ffmpeg-Render schlug fehl (Exit 234), übersprungen.
 - Hinweis: OpenAI-Whisper ohne Guthaben (429), lokales Whisper genutzt. Buffer: YouTube max. 2 Posts pro Tag.
 - Rumathra-Stream zeigt kein GTA, sondern ein Weltraum-Abbauspiel (Titel daher ohne GTA).
+
+## Lauf 2026-11-28
+- VODs: zarbex (2941273430-28800, 3 Clips Bew. 7/6/6), dhalucard (2942201976-0, nichts Brauchbares, erledigt ohne Clips).
+- Geplant: 3 TikTok (29.11. 13/17/21 Uhr) + 2 YouTube (3.12. 13:00/19:00); 1 YouTube-Entwurf (Chat-Einkauf-Clip), da Buffer-Limit 10 geplante Posts erreicht.
+- OpenAI-Whisper ohne Guthaben (429), lokales Whisper genutzt.
